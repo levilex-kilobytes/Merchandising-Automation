@@ -1,0 +1,9 @@
+{
+  "name": "@mfa/warehouse-receiving-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo 'warehouse-receiving-app not yet implemented' && exit 0",
+    "build": "echo 'warehouse-receiving-app not yet implemented' && exit 0"
+  }
+}

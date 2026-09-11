@@ -1,0 +1,9 @@
+{
+  "name": "@mfa/store-manager-dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo 'store-manager-dashboard not yet implemented' && exit 0",
+    "build": "echo 'store-manager-dashboard not yet implemented' && exit 0"
+  }
+}

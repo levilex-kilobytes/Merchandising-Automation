@@ -1,0 +1,9 @@
+{
+  "name": "@mfa/inventory-control-center",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo 'inventory-control-center not yet implemented' && exit 0",
+    "build": "echo 'inventory-control-center not yet implemented' && exit 0"
+  }
+}

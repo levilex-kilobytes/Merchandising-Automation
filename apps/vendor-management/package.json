@@ -1,0 +1,21 @@
+{
+  "name": "@mfa/vendor-management",
+  "version": "0.1.0",
+  "private": true,
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js",
+    "test": "jest --passWithNoTests",
+    "migrate": "ts-node scripts/migrate.ts"
+  },
+  "dependencies": {
+    "@grpc/grpc-js": "^1.11.2",
+    "@grpc/proto-loader": "^0.7.13",
+    "@mfa/errors": "*",
+    "@mfa/event-bus": "*",
+    "@mfa/logger": "*",
+    "@mfa/shared-types": "*"
+  }
+}
