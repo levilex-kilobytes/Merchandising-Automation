@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+    branches: [main, 'feat/**']
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+      rabbitmq:
+        image: rabbitmq:3.13-management-alpine
+        env:
+          RABBITMQ_DEFAULT_USER: guest
+          RABBITMQ_DEFAULT_PASS: guest
+        ports:
+          - 5672:5672
+        options: >-
+          --health-cmd "rabbitmq-diagnostics -q ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build --workspaces --if-present
+
+      - name: Test
+        run: npm run test --workspaces --if-present
+
+      - name: Setup test database
+        env:
+          PGPASSWORD: postgres
+        run: |
+          psql -h localhost -U postgres -c "CREATE DATABASE vendor_db;"
+          psql -h localhost -U postgres -c "CREATE USER vendor_user WITH ENCRYPTED PASSWORD 'vendor_pass';"
+          psql -h localhost -U postgres -c "GRANT ALL PRIVILEGES ON DATABASE vendor_db TO vendor_user;"
+          psql -h localhost -U postgres -d vendor_db -c "GRANT ALL ON SCHEMA public TO vendor_user;"
+          psql -h localhost -U postgres -d vendor_db -c "ALTER SCHEMA public OWNER TO vendor_user;"
+
+      - name: Prepare env
+        run: cp apps/vendor-management/.env.example apps/vendor-management/.env
+
+      - name: Run migrations
+        run: npm run migrate:vendor

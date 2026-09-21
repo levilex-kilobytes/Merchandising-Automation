@@ -1,0 +1,9 @@
+{
+  "name": "@mfa/warehouse-floor-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo 'warehouse-floor-app not yet implemented' && exit 0",
+    "build": "echo 'warehouse-floor-app not yet implemented' && exit 0"
+  }
+}

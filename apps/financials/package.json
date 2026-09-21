@@ -1,0 +1,10 @@
+{
+  "name": "@mfa/financials",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo 'financials not yet implemented' && exit 0",
+    "build": "echo 'financials not yet implemented' && exit 0",
+    "test": "echo 'no tests yet' && exit 0"
+  }
+}

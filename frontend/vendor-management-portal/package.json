@@ -1,0 +1,9 @@
+{
+  "name": "@mfa/vendor-management-portal",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo 'vendor-management-portal not yet implemented' && exit 0",
+    "build": "echo 'vendor-management-portal not yet implemented' && exit 0"
+  }
+}

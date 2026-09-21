@@ -1,0 +1,10 @@
+{
+  "name": "@mfa/retail-sales",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo 'retail-sales not yet implemented' && exit 0",
+    "build": "echo 'retail-sales not yet implemented' && exit 0",
+    "test": "echo 'no tests yet' && exit 0"
+  }
+}

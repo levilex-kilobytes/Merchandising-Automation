@@ -1,0 +1,9 @@
+{
+  "name": "@mfa/point-of-sale-terminal",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "echo 'point-of-sale-terminal not yet implemented' && exit 0",
+    "build": "echo 'point-of-sale-terminal not yet implemented' && exit 0"
+  }
+}

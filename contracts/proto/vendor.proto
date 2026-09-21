@@ -1,0 +1,44 @@
+syntax = "proto3";
+package mfa.vendor.v1;
+
+service VendorService {
+  rpc GetSupplier (GetSupplierRequest) returns (SupplierReply);
+  rpc GetSupplierProduct (GetSupplierProductRequest) returns (SupplierProductReply);
+  rpc ListSuppliersForProduct (ListSuppliersForProductRequest) returns (ListSuppliersForProductReply);
+}
+
+message GetSupplierRequest {
+  string id = 1;
+}
+
+message SupplierReply {
+  string id = 1;
+  string name = 2;
+  string payment_terms = 3;
+  string default_currency = 4;
+  string status = 5;
+}
+
+message GetSupplierProductRequest {
+  string supplier_id = 1;
+  string product_code = 2;
+}
+
+message SupplierProductReply {
+  string id = 1;
+  string supplier_id = 2;
+  string product_code = 3;
+  string product_name = 4;
+  double unit_cost = 5;
+  string currency = 6;
+  int32 lead_time_days = 7;
+  int32 min_order_qty = 8;
+}
+
+message ListSuppliersForProductRequest {
+  string product_code = 1;
+}
+
+message ListSuppliersForProductReply {
+  repeated SupplierProductReply suppliers = 1;
+}

@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "lib": ["ES2022"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "sourceMap": true,
+    "outDir": "dist",
+    "baseUrl": ".",
+    "ignoreDeprecations": "5.0",
+    "paths": {
+      "@mfa/event-bus": ["packages/event-bus/src"],
+      "@mfa/errors": ["packages/errors/src"],
+      "@mfa/logger": ["packages/logger/src"],
+      "@mfa/shared-types": ["packages/shared-types/src"]
+    }
+  },
+  "exclude": ["node_modules", "dist"]
+}
