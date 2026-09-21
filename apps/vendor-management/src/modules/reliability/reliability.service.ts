@@ -1,7 +1,6 @@
-import { SupplierReliabilityRepository } from '../repositories/supplier-reliability.repository';
-import { OutboxRepository } from '../repositories/outbox.repository';
-import { SupplierReliability } from '../types/supplier';
-import { RecordDeliveryInput } from '../types/dto';
+import { SupplierReliabilityRepository } from './reliability.repository';
+import { OutboxRepository } from '../../shared/outbox.repository';
+import { SupplierReliability, RecordDeliveryDto } from './reliability.types';
 import { NotFoundError } from '@mfa/errors';
 
 export class ReliabilityService {
@@ -10,7 +9,7 @@ export class ReliabilityService {
     private readonly outbox = new OutboxRepository(),
   ) {}
 
-  async recordDelivery(input: RecordDeliveryInput): Promise<SupplierReliability> {
+  async recordDelivery(input: RecordDeliveryDto): Promise<SupplierReliability> {
     return this.repo.withTransaction(async (tx) => {
       const reliability = await this.repo.recordDelivery(tx, {
         supplierId: input.supplierId,

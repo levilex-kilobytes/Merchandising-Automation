@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { SupplierProductService } from '../services/supplier-product.service';
+import { SupplierProductService } from './supplier-product.service';
 
 export class SupplierProductController {
   constructor(private readonly service = new SupplierProductService()) {}

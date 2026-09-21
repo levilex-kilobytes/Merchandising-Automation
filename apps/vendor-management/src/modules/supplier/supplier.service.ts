@@ -1,7 +1,6 @@
-import { SupplierRepository } from '../repositories/supplier.repository';
-import { OutboxRepository } from '../repositories/outbox.repository';
-import { Supplier } from '../types/supplier';
-import { CreateSupplierInput, UpdateSupplierInput, ListSuppliersQuery } from '../types/dto';
+import { SupplierRepository } from './supplier.repository';
+import { OutboxRepository } from '../../shared/outbox.repository';
+import { Supplier, CreateSupplierDto, UpdateSupplierDto, ListSuppliersQueryDto } from './supplier.types';
 import { ConflictError, NotFoundError } from '@mfa/errors';
 
 export class SupplierService {
@@ -10,7 +9,7 @@ export class SupplierService {
     private readonly outbox = new OutboxRepository(),
   ) {}
 
-  async createSupplier(input: CreateSupplierInput): Promise<Supplier> {
+  async createSupplier(input: CreateSupplierDto): Promise<Supplier> {
     const existing = await this.suppliers.findByName(input.name);
     if (existing) throw new ConflictError(`Supplier '${input.name}' already exists`);
 
@@ -36,11 +35,11 @@ export class SupplierService {
     return supplier;
   }
 
-  async listSuppliers(filter: ListSuppliersQuery): Promise<Supplier[]> {
+  async listSuppliers(filter: ListSuppliersQueryDto): Promise<Supplier[]> {
     return this.suppliers.list(filter);
   }
 
-  async updateSupplier(id: string, patch: UpdateSupplierInput): Promise<Supplier> {
+  async updateSupplier(id: string, patch: UpdateSupplierDto): Promise<Supplier> {
     return this.suppliers.withTransaction(async (tx) => {
       const existing = await this.suppliers.findById(id);
       if (!existing) throw new NotFoundError(`Supplier ${id} not found`);

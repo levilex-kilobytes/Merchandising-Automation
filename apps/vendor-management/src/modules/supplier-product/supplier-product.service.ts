@@ -1,8 +1,7 @@
-import { SupplierProductRepository } from '../repositories/supplier-product.repository';
-import { SupplierRepository } from '../repositories/supplier.repository';
-import { OutboxRepository } from '../repositories/outbox.repository';
-import { SupplierProduct, SupplierProductPriceHistory } from '../types/supplier';
-import { CreateSupplierProductInput, UpdateSupplierProductInput } from '../types/dto';
+import { SupplierProductRepository } from './supplier-product.repository';
+import { SupplierRepository } from '../supplier/supplier.repository';
+import { OutboxRepository } from '../../shared/outbox.repository';
+import { SupplierProduct, SupplierProductPriceHistory, CreateSupplierProductDto, UpdateSupplierProductDto } from './supplier-product.types';
 import { ConflictError, NotFoundError } from '@mfa/errors';
 
 export class SupplierProductService {
@@ -12,7 +11,7 @@ export class SupplierProductService {
     private readonly outbox = new OutboxRepository(),
   ) {}
 
-  async addProduct(supplierId: string, input: CreateSupplierProductInput): Promise<SupplierProduct> {
+  async addProduct(supplierId: string, input: CreateSupplierProductDto): Promise<SupplierProduct> {
     const supplier = await this.suppliers.findById(supplierId);
     if (!supplier) throw new NotFoundError(`Supplier ${supplierId} not found`);
 
@@ -37,7 +36,7 @@ export class SupplierProductService {
     });
   }
 
-  async updateProduct(id: string, patch: UpdateSupplierProductInput): Promise<SupplierProduct> {
+  async updateProduct(id: string, patch: UpdateSupplierProductDto): Promise<SupplierProduct> {
     const existing = await this.products.findById(id);
     if (!existing) throw new NotFoundError(`SupplierProduct ${id} not found`);
 

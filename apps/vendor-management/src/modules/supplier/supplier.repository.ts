@@ -1,13 +1,12 @@
 import { PoolClient } from 'pg';
-import { pool, withTransaction } from '../config/database';
-import { SupplierRow, toSupplier } from '../models/supplier.model';
-import { Supplier } from '../types/supplier';
-import { CreateSupplierInput, UpdateSupplierInput, ListSuppliersQuery } from '../types/dto';
+import { pool, withTransaction } from '../../config/database';
+import { SupplierRow, toSupplier } from './supplier.model';
+import { Supplier, CreateSupplierDto, UpdateSupplierDto, ListSuppliersQueryDto } from './supplier.types';
 
 export class SupplierRepository {
   withTransaction = withTransaction;
 
-  async create(tx: PoolClient, input: CreateSupplierInput): Promise<Supplier> {
+  async create(tx: PoolClient, input: CreateSupplierDto): Promise<Supplier> {
     const { rows } = await tx.query<SupplierRow>(
       `INSERT INTO suppliers
         (name, legal_name, tax_id, status, email, phone,
@@ -49,7 +48,7 @@ export class SupplierRepository {
     return rows[0] ? toSupplier(rows[0]) : null;
   }
 
-  async list(filter: ListSuppliersQuery): Promise<Supplier[]> {
+  async list(filter: ListSuppliersQueryDto): Promise<Supplier[]> {
     const conditions: string[] = [];
     const params: unknown[] = [];
     if (filter.status) {
@@ -68,7 +67,7 @@ export class SupplierRepository {
     return rows.map(toSupplier);
   }
 
-  async update(tx: PoolClient, id: string, patch: UpdateSupplierInput): Promise<Supplier> {
+  async update(tx: PoolClient, id: string, patch: UpdateSupplierDto): Promise<Supplier> {
     const map: Record<string, string> = {
       name: 'name',
       legalName: 'legal_name',

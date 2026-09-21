@@ -1,18 +1,17 @@
 import { PoolClient } from 'pg';
-import { pool, withTransaction } from '../config/database';
+import { pool, withTransaction } from '../../config/database';
 import {
   SupplierProductRow,
   PriceHistoryRow,
   toSupplierProduct,
   toPriceHistory,
-} from '../models/supplier.model';
-import { SupplierProduct, SupplierProductPriceHistory } from '../types/supplier';
-import { CreateSupplierProductInput, UpdateSupplierProductInput } from '../types/dto';
+} from './supplier-product.model';
+import { SupplierProduct, SupplierProductPriceHistory, CreateSupplierProductDto, UpdateSupplierProductDto } from './supplier-product.types';
 
 export class SupplierProductRepository {
   withTransaction = withTransaction;
 
-  async create(tx: PoolClient, supplierId: string, input: CreateSupplierProductInput): Promise<SupplierProduct> {
+  async create(tx: PoolClient, supplierId: string, input: CreateSupplierProductDto): Promise<SupplierProduct> {
     const { rows } = await tx.query<SupplierProductRow>(
       `INSERT INTO supplier_products
         (supplier_id, product_code, product_name, unit_cost, currency,
@@ -67,7 +66,7 @@ export class SupplierProductRepository {
     return rows.map(toSupplierProduct);
   }
 
-  async update(tx: PoolClient, id: string, patch: UpdateSupplierProductInput): Promise<SupplierProduct> {
+  async update(tx: PoolClient, id: string, patch: UpdateSupplierProductDto): Promise<SupplierProduct> {
     const map: Record<string, string> = {
       productName: 'product_name',
       unitCost: 'unit_cost',

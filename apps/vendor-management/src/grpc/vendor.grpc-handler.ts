@@ -1,6 +1,6 @@
 import * as grpc from '@grpc/grpc-js';
-import { SupplierService } from '../services/supplier.service';
-import { SupplierProductService } from '../services/supplier-product.service';
+import { SupplierService } from '../modules/supplier/supplier.service';
+import { SupplierProductService } from '../modules/supplier-product/supplier-product.service';
 
 interface GetSupplierRequest { id: string }
 interface GetSupplierProductRequest { supplier_id: string; product_code: string }

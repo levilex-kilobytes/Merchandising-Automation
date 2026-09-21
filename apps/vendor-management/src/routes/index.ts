@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { supplierRouter } from './supplier.routes';
-import { supplierProductRouter, productRouter, productLookupRouter } from './supplier-product.routes';
+import { supplierRouter } from '../modules/supplier/supplier.routes';
+import { supplierProductRouter, productRouter, productLookupRouter } from '../modules/supplier-product/supplier-product.routes';
 import { config } from '../config';
 
 export const apiRouter = Router();

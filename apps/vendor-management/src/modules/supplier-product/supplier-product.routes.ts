@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { SupplierProductController } from '../controllers/supplier-product.controller';
-import { validateBody } from '../middleware/validate';
-import { CreateSupplierProductSchema, UpdateSupplierProductSchema, ChangePriceSchema } from '../types/dto';
+import { SupplierProductController } from './supplier-product.controller';
+import { validateBody } from '../../middleware/validate';
+import { CreateSupplierProductSchema, UpdateSupplierProductSchema, ChangePriceSchema } from './supplier-product.validation';
 
 const controller = new SupplierProductController();
 

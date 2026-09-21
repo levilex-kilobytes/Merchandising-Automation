@@ -1,6 +1,6 @@
 import { EventBus } from '@mfa/event-bus';
 import { Logger } from '@mfa/logger';
-import { ReliabilityService } from '../../services/reliability.service';
+import { ReliabilityService } from '../../modules/reliability/reliability.service';
 
 interface GrnCompletedPayload {
   grnId: string;

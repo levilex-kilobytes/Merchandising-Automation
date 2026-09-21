@@ -1,7 +1,7 @@
 import { PoolClient } from 'pg';
-import { pool, withTransaction } from '../config/database';
-import { ReliabilityRow, toReliability } from '../models/supplier.model';
-import { SupplierReliability } from '../types/supplier';
+import { pool, withTransaction } from '../../config/database';
+import { ReliabilityRow, toReliability } from './reliability.model';
+import { SupplierReliability } from './reliability.types';
 
 export class SupplierReliabilityRepository {
   withTransaction = withTransaction;

@@ -9,13 +9,13 @@ import { errorHandler } from './middleware/error-handler';
 import { requireFeature } from './middleware/feature-flag';
 import { RabbitMQEventBus } from '@mfa/event-bus';
 import { Logger } from '@mfa/logger';
-import { OutboxRepository } from './repositories/outbox.repository';
+import { OutboxRepository } from './shared/outbox.repository';
 import { OutboxPublisher } from './events/publisher';
 import { registerGrnCompletedHandler } from './events/handlers/grn-completed.handler';
 import { buildVendorGrpcHandlers } from './grpc/vendor.grpc-handler';
-import { SupplierService } from './services/supplier.service';
-import { SupplierProductService } from './services/supplier-product.service';
-import { ReliabilityService } from './services/reliability.service';
+import { SupplierService } from './modules/supplier/supplier.service';
+import { SupplierProductService } from './modules/supplier-product/supplier-product.service';
+import { ReliabilityService } from './modules/reliability/reliability.service';
 
 async function main(): Promise<void> {
   const logger = new Logger({
@@ -55,11 +55,7 @@ async function main(): Promise<void> {
   app.use(errorHandler(logger));
 
   app.listen(config.PORT, config.HTTP_HOST, () => {
-    logger.info('REST listening', {
-      host: config.HTTP_HOST,
-      port: config.PORT,
-      prefix: config.API_PREFIX,
-    });
+    logger.info('REST listening', { host: config.HTTP_HOST, port: config.PORT, prefix: config.API_PREFIX });
   });
 
   const protoPath = path.resolve(__dirname, '../../../contracts/proto/vendor.proto');

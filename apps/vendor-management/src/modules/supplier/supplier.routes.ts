@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { SupplierController } from '../controllers/supplier.controller';
-import { validateBody, validateQuery } from '../middleware/validate';
-import { CreateSupplierSchema, UpdateSupplierSchema, ListSuppliersQuerySchema } from '../types/dto';
+import { SupplierController } from './supplier.controller';
+import { validateBody, validateQuery } from '../../middleware/validate';
+import { CreateSupplierSchema, UpdateSupplierSchema, ListSuppliersQuerySchema } from './supplier.validation';
 
 export const supplierRouter = Router();
 const controller = new SupplierController();
