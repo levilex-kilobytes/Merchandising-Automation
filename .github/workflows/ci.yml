@@ -54,7 +54,7 @@ jobs:
       - name: Test
         run: npm run test --workspaces --if-present
 
-      - name: Setup test databases
+      - name: Setup test database
         env:
           PGPASSWORD: postgres
         run: |
@@ -64,7 +64,8 @@ jobs:
           psql -h localhost -U postgres -d vendor_db -c "GRANT ALL ON SCHEMA public TO vendor_user;"
           psql -h localhost -U postgres -d vendor_db -c "ALTER SCHEMA public OWNER TO vendor_user;"
 
+      - name: Prepare env
+        run: cp apps/vendor-management/.env.example apps/vendor-management/.env
+
       - name: Run migrations
-        env:
-          DATABASE_URL: postgres://vendor_user:vendor_pass@localhost:5432/vendor_db
         run: npm run migrate:vendor
