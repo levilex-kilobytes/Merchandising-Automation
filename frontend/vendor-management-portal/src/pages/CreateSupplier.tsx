@@ -155,5 +155,5 @@ function clean(dto: CreateSupplierDto): CreateSupplierDto {
   for (const [k, v] of Object.entries(dto)) {
     if (v !== '' && v !== undefined && v !== null) out[k] = v;
   }
-  return out as CreateSupplierDto;
+  return out as unknown as CreateSupplierDto;
 }
