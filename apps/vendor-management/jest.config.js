@@ -1,7 +1,9 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  roots: ['<rootDir>/tests'],
+  roots: ['<rootDir>/src', '<rootDir>/tests'],
+  testMatch: ['**/*.test.ts', '**/*.spec.ts'],
+  passWithNoTests: true,
   moduleNameMapper: {
     '^@mfa/errors$': '<rootDir>/../../packages/errors/src',
     '^@mfa/logger$': '<rootDir>/../../packages/logger/src',
