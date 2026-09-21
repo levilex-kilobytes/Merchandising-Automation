@@ -1,4 +1,4 @@
-import { OutboxRepository } from '../repositories/outbox.repository';
+import { OutboxRepository } from '../shared/outbox.repository';
 import { EventBus } from '@mfa/event-bus';
 import { Logger } from '@mfa/logger';
 

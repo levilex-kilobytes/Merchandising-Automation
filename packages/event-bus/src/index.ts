@@ -1,4 +1,4 @@
-import amqp, { Connection, Channel } from 'amqplib';
+import amqp, { ChannelModel, Channel } from 'amqplib';
 import { DomainEvent } from '@mfa/shared-types';
 import { Logger } from '@mfa/logger';
 
@@ -20,7 +20,7 @@ export interface EventBus {
 }
 
 export class RabbitMQEventBus implements EventBus {
-  private conn?: Connection;
+  private conn?: ChannelModel;
   private pubChannel?: Channel;
   private subChannel?: Channel;
 
