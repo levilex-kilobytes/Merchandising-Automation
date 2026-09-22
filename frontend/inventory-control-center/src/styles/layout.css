@@ -1,0 +1,28 @@
+.layout { min-height: 100vh; display: flex; flex-direction: column; }
+.header { background: white; border-bottom: 1px solid var(--border); padding: 0 24px; height: 64px; display: flex; align-items: center; gap: 32px; position: sticky; top: 0; z-index: 10; }
+.header h1 { font-size: 18px; font-weight: 600; margin: 0; color: var(--primary); }
+.nav { display: flex; gap: 24px; margin-left: 32px; }
+.nav a { color: var(--muted); font-weight: 500; padding: 4px 0; border-bottom: 2px solid transparent; }
+.nav a.active { color: var(--primary); border-bottom-color: var(--primary); }
+.main { flex: 1; padding: 32px 24px; max-width: 1200px; margin: 0 auto; width: 100%; }
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
+.page-header h2 { font-size: 24px; font-weight: 600; }
+.card { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 24px; }
+.filters { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+.filters input { flex: 1; max-width: 320px; }
+.filters select { width: auto; min-width: 160px; }
+.empty { text-align: center; padding: 48px 24px; color: var(--muted); }
+.error-box { background: #fee2e2; border: 1px solid #fecaca; color: #991b1b; padding: 12px 16px; border-radius: var(--radius); margin-bottom: 16px; }
+.success-box { background: #d1fae5; border: 1px solid #6ee7b7; color: #065f46; padding: 12px 16px; border-radius: var(--radius); margin-bottom: 16px; }
+.loading { text-align: center; padding: 48px; color: var(--muted); }
+.detail-grid { display: grid; grid-template-columns: 220px 1fr; gap: 12px 24px; }
+.detail-grid dt { color: var(--muted); font-weight: 500; }
+.detail-grid dd { color: var(--text); }
+.summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.summary-item { background: white; border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; text-align: center; }
+.summary-item .num { font-size: 32px; font-weight: 700; margin-bottom: 4px; }
+.summary-item .label { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+.summary-item.warn .num { color: var(--warning); }
+.summary-item.danger .num { color: var(--danger); }
+.summary-item.success .num { color: var(--success); }
+.summary-item.money .num { color: var(--primary); }

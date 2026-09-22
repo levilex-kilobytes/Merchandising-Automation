@@ -23,7 +23,10 @@
     "dev:receiving": "npm --workspace=@mfa/receiving run dev",
     "migrate:receiving": "npm --workspace=@mfa/receiving run migrate",
     "dev:warehouse-receiving": "npm --workspace=@mfa/warehouse-receiving-app run dev",
-    "build:warehouse-receiving": "npm --workspace=@mfa/warehouse-receiving-app run build"
+    "build:warehouse-receiving": "npm --workspace=@mfa/warehouse-receiving-app run build",
+    "dev:inventory": "npm --workspace=@mfa/inventory run dev",
+    "migrate:inventory": "npm --workspace=@mfa/inventory run migrate",
+    "dev:inventory-ui": "npm --workspace=@mfa/inventory-control-center run dev"
   },
   "dependencies": {
     "amqplib": "^0.10.4",
