@@ -5,6 +5,7 @@ import { config } from '../config';
 
 interface POExpectedItem {
   product_code: string;
+  product_name: string;
   ordered_qty: number;
   received_qty: number;
   unit_cost: number;

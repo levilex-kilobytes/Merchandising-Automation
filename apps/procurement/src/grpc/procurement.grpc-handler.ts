@@ -29,6 +29,7 @@ export function buildProcurementGrpcHandlers(service: PurchaseOrderService) {
         callback(null, {
           items: (po.lines ?? []).map((l) => ({
             product_code: l.productCode,
+            product_name: l.productName,
             ordered_qty: l.orderedQty,
             received_qty: l.receivedQty,
             unit_cost: l.unitCost,

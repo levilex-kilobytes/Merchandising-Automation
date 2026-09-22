@@ -1,0 +1,72 @@
+openapi: 3.0.3
+info:
+  title: Inventory API
+  version: 1.0.0
+servers:
+  - url: http://localhost:3004/api/v1
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200': { description: OK }
+  /stock:
+    get:
+      summary: List stock items
+      parameters:
+        - in: query
+          name: productCode
+          schema: { type: string }
+        - in: query
+          name: locationCode
+          schema: { type: string }
+        - in: query
+          name: lowOnly
+          schema: { type: boolean }
+      responses:
+        '200': { description: OK }
+  /stock/{productCode}/{locationCode}:
+    get:
+      summary: Get a specific stock item
+      parameters:
+        - { in: path, name: productCode, required: true, schema: { type: string } }
+        - { in: path, name: locationCode, required: true, schema: { type: string } }
+      responses:
+        '200': { description: OK }
+  /stock/adjust:
+    post:
+      summary: Adjust stock (manual correction)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AdjustStock' }
+      responses:
+        '200': { description: OK }
+  /movements:
+    get:
+      summary: List stock movements
+      parameters:
+        - in: query
+          name: productCode
+          schema: { type: string }
+        - in: query
+          name: locationCode
+          schema: { type: string }
+      responses:
+        '200': { description: OK }
+  /locations:
+    get:
+      summary: List known locations
+      responses:
+        '200': { description: OK }
+components:
+  schemas:
+    AdjustStock:
+      type: object
+      required: [productCode, locationCode, delta, reason]
+      properties:
+        productCode: { type: string }
+        locationCode: { type: string }
+        delta: { type: integer }
+        reason: { type: string }

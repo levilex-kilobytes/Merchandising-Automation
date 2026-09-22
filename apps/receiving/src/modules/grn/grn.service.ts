@@ -33,7 +33,7 @@ export class GRNService {
       for (const item of items) {
         await this.repo.addLine(tx, grn.id, {
           productCode: item.product_code,
-          productName: item.product_code,
+          productName: item.product_name,
           orderedQty: item.ordered_qty,
           unitCost: item.unit_cost,
         });
@@ -100,7 +100,9 @@ export class GRNService {
           damages: grn.damages,
           lines: (grn.lines ?? []).map((l) => ({
             productCode: l.productCode,
+            productName: l.productName,
             receivedQty: l.receivedQty,
+            unitCost: l.unitCost,
           })),
         },
       });
