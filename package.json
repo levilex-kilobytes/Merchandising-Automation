@@ -2,14 +2,24 @@
   "name": "merchandising-funnel-automation",
   "private": true,
   "version": "0.1.0",
-  "workspaces": ["apps/*", "packages/*", "frontend/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "frontend/*"
+  ],
   "scripts": {
     "dev:vendor": "npm --workspace=@mfa/vendor-management run dev",
     "migrate:vendor": "npm --workspace=@mfa/vendor-management run migrate",
     "build": "npm run build --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
     "infra:up": "docker-compose -f infrastructure/docker/docker-compose.yml up -d",
-    "infra:down": "docker-compose -f infrastructure/docker/docker-compose.yml down"
+    "infra:down": "docker-compose -f infrastructure/docker/docker-compose.yml down",
+    "dev:procurement": "npm --workspace=@mfa/procurement run dev",
+    "migrate:procurement": "npm --workspace=@mfa/procurement run migrate",
+    "dev:vendor-portal": "npm --workspace=@mfa/vendor-management-portal run dev",
+    "build:vendor-portal": "npm --workspace=@mfa/vendor-management-portal run build",
+    "dev:procurement-dashboard": "npm --workspace=@mfa/procurement-dashboard run dev",
+    "build:procurement-dashboard": "npm --workspace=@mfa/procurement-dashboard run build"
   },
   "dependencies": {
     "amqplib": "^0.10.4",

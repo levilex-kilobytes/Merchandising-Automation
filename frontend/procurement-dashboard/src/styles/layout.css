@@ -1,0 +1,99 @@
+.layout { min-height: 100vh; display: flex; flex-direction: column; }
+
+.header {
+  background: white;
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.header h1 { font-size: 18px; font-weight: 600; margin: 0; }
+
+.nav { display: flex; gap: 24px; margin-left: 32px; }
+
+.nav a {
+  color: var(--muted);
+  font-weight: 500;
+  padding: 4px 0;
+  border-bottom: 2px solid transparent;
+}
+
+.nav a.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+.main {
+  flex: 1;
+  padding: 32px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.page-header h2 { font-size: 24px; font-weight: 600; }
+
+.card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.filters { display: flex; gap: 12px; margin-bottom: 16px; }
+.filters select { width: auto; min-width: 160px; }
+
+.empty { text-align: center; padding: 48px 24px; color: var(--muted); }
+
+.error-box {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+}
+
+.success-box {
+  background: #d1fae5;
+  border: 1px solid #6ee7b7;
+  color: #065f46;
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+}
+
+.loading { text-align: center; padding: 48px; color: var(--muted); }
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 12px 24px;
+}
+
+.detail-grid dt { color: var(--muted); font-weight: 500; }
+.detail-grid dd { color: var(--text); }
+
+.actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.timeline { list-style: none; padding-left: 0; }
+.timeline li {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 16px;
+}
+.timeline li:last-child { border-bottom: none; }
+.timeline .ts { color: var(--muted); font-size: 13px; }

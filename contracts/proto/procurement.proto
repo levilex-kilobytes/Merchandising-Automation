@@ -1,0 +1,35 @@
+syntax = "proto3";
+package mfa.procurement.v1;
+
+service ProcurementService {
+  rpc GetPurchaseOrder (GetPurchaseOrderRequest) returns (PurchaseOrderReply);
+  rpc GetPOExpectedItems (GetPOExpectedItemsRequest) returns (GetPOExpectedItemsReply);
+}
+
+message GetPurchaseOrderRequest {
+  string id = 1;
+}
+
+message PurchaseOrderReply {
+  string id = 1;
+  string supplier_id = 2;
+  string status = 3;
+  string currency = 4;
+  double total_cost = 5;
+  string expected_date = 6;
+}
+
+message GetPOExpectedItemsRequest {
+  string po_id = 1;
+}
+
+message POExpectedItem {
+  string product_code = 1;
+  int32 ordered_qty = 2;
+  int32 received_qty = 3;
+  double unit_cost = 4;
+}
+
+message GetPOExpectedItemsReply {
+  repeated POExpectedItem items = 1;
+}
