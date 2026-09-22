@@ -44,7 +44,7 @@ async function main(): Promise<void> {
   const InventoryService = proto.mfa.inventory.v1.InventoryService;
 
   const server = new grpc.Server();
-  server.addService(InventoryService.service, buildInventoryGrpcHandlers(stockService));
+  server.addService(InventoryService.service, buildInventoryGrpcHandlers(stockService) as never);
   server.bindAsync(`${config.GRPC_HOST}:${config.GRPC_PORT}`, grpc.ServerCredentials.createInsecure(), (err, port) => {
     if (err) { logger.error('gRPC bind failed', { err: String(err) }); process.exit(1); }
     logger.info('gRPC listening', { host: config.GRPC_HOST, port });
