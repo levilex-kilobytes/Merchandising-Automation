@@ -1,0 +1,38 @@
+syntax = "proto3";
+package mfa.inventory.v1;
+
+service InventoryService {
+  rpc CheckAvailability (CheckAvailabilityRequest) returns (AvailabilityReply);
+  rpc GetStockItem (GetStockItemRequest) returns (StockItemReply);
+}
+
+message CheckAvailabilityRequest {
+  string product_code = 1;
+  string location_code = 2;
+}
+
+message AvailabilityReply {
+  string product_code = 1;
+  string location_code = 2;
+  int32 on_hand = 3;
+  int32 allocated = 4;
+  int32 available = 5;
+}
+
+message GetStockItemRequest {
+  string product_code = 1;
+  string location_code = 2;
+}
+
+message StockItemReply {
+  string id = 1;
+  string product_code = 2;
+  string product_name = 3;
+  string location_code = 4;
+  int32 on_hand = 5;
+  int32 allocated = 6;
+  int32 available = 7;
+  int32 on_order = 8;
+  double unit_cost = 9;
+  double valuation = 10;
+}
