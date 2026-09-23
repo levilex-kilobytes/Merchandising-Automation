@@ -56,7 +56,7 @@ export class PurchaseOrderService {
         },
       });
 
-      return this.repo.findById(po.id) as Promise<PurchaseOrder>;
+      return this.repo.findById(po.id, tx) as Promise<PurchaseOrder>;
     });
   }
 

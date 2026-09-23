@@ -1,0 +1,75 @@
+openapi: 3.0.3
+info:
+  title: Receiving API
+  version: 1.0.0
+servers:
+  - url: http://localhost:3003/api/v1
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200': { description: OK }
+  /grns:
+    get:
+      summary: List GRNs
+      parameters:
+        - in: query
+          name: status
+          schema: { type: string }
+        - in: query
+          name: poId
+          schema: { type: string, format: uuid }
+      responses:
+        '200': { description: OK }
+    post:
+      summary: Create a new GRN (draft)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateGRN' }
+      responses:
+        '201': { description: Created }
+  /grns/{id}:
+    get:
+      summary: Get a GRN
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: OK }
+  /grns/{id}/lines:
+    post:
+      summary: Add or update a received line
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RecordLine' }
+      responses:
+        '200': { description: OK }
+  /grns/{id}/complete:
+    post:
+      summary: Finalize the GRN and mark goods as received
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: OK }
+components:
+  schemas:
+    CreateGRN:
+      type: object
+      required: [poId]
+      properties:
+        poId: { type: string, format: uuid }
+        notes: { type: string }
+    RecordLine:
+      type: object
+      required: [productCode, receivedQty, condition]
+      properties:
+        productCode: { type: string }
+        receivedQty: { type: integer, minimum: 0 }
+        condition: { type: string, enum: [good, damaged] }
+        notes: { type: string }
