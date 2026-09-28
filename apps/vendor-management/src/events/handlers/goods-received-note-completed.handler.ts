@@ -3,9 +3,9 @@ import { Logger } from '@mfa/logger';
 import { ReliabilityService } from '../../modules/reliability/reliability.service';
 
 interface GrnCompletedPayload {
-  grnId: string;
+  goodsReceivedNoteId: string;
   supplierId: string;
-  poId: string;
+  purchaseOrderId: string;
   poExpectedDate: string;
   grnDate: string;
   shortages: number;
@@ -17,7 +17,7 @@ export async function registerGrnCompletedHandler(
   logger: Logger,
   service: ReliabilityService,
 ): Promise<void> {
-  await bus.subscribe<GrnCompletedPayload>('receiving.grn.completed', async (event) => {
+  await bus.subscribe<GrnCompletedPayload>('receiving.goods-received-note.completed', async (event) => {
     const p = event.payload;
     try {
       const onTime = new Date(p.grnDate) <= new Date(p.poExpectedDate);
@@ -28,9 +28,9 @@ export async function registerGrnCompletedHandler(
         hadShortage: p.shortages > 0,
         hadDamage: p.damages > 0,
       });
-      logger.info('Reliability updated', { supplierId: p.supplierId, grnId: p.grnId, onTime });
+      logger.info('Reliability updated', { supplierId: p.supplierId, goodsReceivedNoteId: p.goodsReceivedNoteId, onTime });
     } catch (err) {
-      logger.error('Failed to update reliability', { grnId: p.grnId, err: String(err) });
+      logger.error('Failed to update reliability', { goodsReceivedNoteId: p.goodsReceivedNoteId, err: String(err) });
       throw err;
     }
   });

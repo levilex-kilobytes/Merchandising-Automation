@@ -1,6 +1,6 @@
-import { GRN, GRNLine } from './grn.types';
+import { GoodsReceivedNote, GoodsReceivedNoteLine } from './goods-received-note.types';
 
-export interface GRNRow {
+export interface GoodsReceivedNoteRow {
   id: string;
   po_id: string;
   supplier_id: string;
@@ -16,7 +16,7 @@ export interface GRNRow {
   updated_at: Date;
 }
 
-export interface GRNLineRow {
+export interface GoodsReceivedNoteLineRow {
   id: string;
   grn_id: string;
   product_code: string;
@@ -32,13 +32,13 @@ export interface GRNLineRow {
   updated_at: Date;
 }
 
-export function toGRN(row: GRNRow, lines?: GRNLineRow[]): GRN {
+export function toGRN(row: GoodsReceivedNoteRow, lines?: GoodsReceivedNoteLineRow[]): GoodsReceivedNote {
   return {
     id: row.id,
-    poId: row.po_id,
+    purchaseOrderId: row.po_id,
     supplierId: row.supplier_id,
     supplierName: row.supplier_name,
-    status: row.status as GRN['status'],
+    status: row.status as GoodsReceivedNote['status'],
     receivedAt: row.received_at,
     shortages: row.shortages,
     overages: row.overages,
@@ -51,16 +51,16 @@ export function toGRN(row: GRNRow, lines?: GRNLineRow[]): GRN {
   };
 }
 
-export function toGRNLine(row: GRNLineRow): GRNLine {
+export function toGRNLine(row: GoodsReceivedNoteLineRow): GoodsReceivedNoteLine {
   return {
     id: row.id,
-    grnId: row.grn_id,
+    goodsReceivedNoteId: row.grn_id,
     productCode: row.product_code,
     productName: row.product_name,
     orderedQty: row.ordered_qty,
     receivedQty: row.received_qty,
     damagedQty: row.damaged_qty,
-    condition: row.condition as GRNLine['condition'],
+    condition: row.condition as GoodsReceivedNoteLine['condition'],
     unitCost: Number(row.unit_cost),
     lineTotal: Number(row.line_total),
     notes: row.notes,

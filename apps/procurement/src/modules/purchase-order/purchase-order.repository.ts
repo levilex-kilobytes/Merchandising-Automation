@@ -1,12 +1,12 @@
 import { PoolClient } from 'pg';
 import { pool, withTransaction } from '../../config/database';
-import { PORow, POLineRow, toPurchaseOrder, toPOLine } from './purchase-order.model';
-import { PurchaseOrder, POLine, ListPOQueryDto, POStatus } from './purchase-order.types';
+import { PurchaseOrderRow, PurchaseOrderLineRow, toPurchaseOrder, toPOLine } from './purchase-order.model';
+import { PurchaseOrder, PurchaseOrderLine, ListPurchaseOrdersQueryDto, PurchaseOrderStatus } from './purchase-order.types';
 
 export class PurchaseOrderRepository {
   withTransaction = withTransaction;
 
-  async createPO(
+  async createPurchaseOrder(
     tx: PoolClient,
     input: {
       supplierId: string;
@@ -16,7 +16,7 @@ export class PurchaseOrderRepository {
       notes?: string;
     },
   ): Promise<PurchaseOrder> {
-    const { rows } = await tx.query<PORow>(
+    const { rows } = await tx.query<PurchaseOrderRow>(
       `INSERT INTO purchase_orders
         (supplier_id, supplier_name, status, currency, expected_date, notes)
        VALUES ($1, $2, 'draft', $3, $4, $5)
@@ -28,7 +28,7 @@ export class PurchaseOrderRepository {
 
   async createLine(
     tx: PoolClient,
-    poId: string,
+    purchaseOrderId: string,
     line: {
       productCode: string;
       productName: string;
@@ -36,30 +36,30 @@ export class PurchaseOrderRepository {
       unitCost: number;
       leadTimeDays: number;
     },
-  ): Promise<POLine> {
+  ): Promise<PurchaseOrderLine> {
     const lineTotal = Number((line.orderedQty * line.unitCost).toFixed(2));
-    const { rows } = await tx.query<POLineRow>(
+    const { rows } = await tx.query<PurchaseOrderLineRow>(
       `INSERT INTO po_lines
         (po_id, product_code, product_name, ordered_qty, unit_cost, line_total, lead_time_days)
        VALUES ($1,$2,$3,$4,$5,$6,$7)
        RETURNING *`,
-      [poId, line.productCode, line.productName, line.orderedQty, line.unitCost, lineTotal, line.leadTimeDays],
+      [purchaseOrderId, line.productCode, line.productName, line.orderedQty, line.unitCost, lineTotal, line.leadTimeDays],
     );
     return toPOLine(rows[0]);
   }
 
   async findById(id: string, tx?: PoolClient): Promise<PurchaseOrder | null> {
     const client = tx ?? pool;
-    const { rows } = await client.query<PORow>(`SELECT * FROM purchase_orders WHERE id = $1`, [id]);
+    const { rows } = await client.query<PurchaseOrderRow>(`SELECT * FROM purchase_orders WHERE id = $1`, [id]);
     if (!rows[0]) return null;
-    const { rows: lines } = await client.query<POLineRow>(
+    const { rows: lines } = await client.query<PurchaseOrderLineRow>(
       `SELECT * FROM po_lines WHERE po_id = $1 ORDER BY created_at ASC`,
       [id],
     );
     return toPurchaseOrder(rows[0], lines);
   }
 
-  async list(filter: ListPOQueryDto): Promise<PurchaseOrder[]> {
+  async list(filter: ListPurchaseOrdersQueryDto): Promise<PurchaseOrder[]> {
     const conditions: string[] = [];
     const params: unknown[] = [];
     if (filter.status) {
@@ -71,7 +71,7 @@ export class PurchaseOrderRepository {
       conditions.push(`supplier_id = $${params.length}`);
     }
     const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
-    const { rows } = await pool.query<PORow>(
+    const { rows } = await pool.query<PurchaseOrderRow>(
       `SELECT * FROM purchase_orders ${where} ORDER BY created_at DESC`,
       params,
     );
@@ -81,7 +81,7 @@ export class PurchaseOrderRepository {
   async updateStatus(
     tx: PoolClient,
     id: string,
-    status: POStatus,
+    status: PurchaseOrderStatus,
     extra: Partial<{
       approvedBy: string;
       approvedAt: Date;
@@ -112,7 +112,7 @@ export class PurchaseOrderRepository {
       }
     }
     values.push(id);
-    const { rows } = await tx.query<PORow>(
+    const { rows } = await tx.query<PurchaseOrderRow>(
       `UPDATE purchase_orders SET ${sets.join(', ')}
        WHERE id = $${values.length} RETURNING *`,
       values,
@@ -120,28 +120,28 @@ export class PurchaseOrderRepository {
     return toPurchaseOrder(rows[0]);
   }
 
-  async recalculateTotal(tx: PoolClient, poId: string): Promise<number> {
+  async recalculateTotal(tx: PoolClient, purchaseOrderId: string): Promise<number> {
     const { rows } = await tx.query<{ total: string }>(
       `SELECT COALESCE(SUM(line_total), 0)::text AS total FROM po_lines WHERE po_id = $1`,
-      [poId],
+      [purchaseOrderId],
     );
     const total = Number(rows[0].total);
-    await tx.query(`UPDATE purchase_orders SET total_cost = $1, updated_at = NOW() WHERE id = $2`, [total, poId]);
+    await tx.query(`UPDATE purchase_orders SET total_cost = $1, updated_at = NOW() WHERE id = $2`, [total, purchaseOrderId]);
     return total;
   }
 
-  async addApproval(tx: PoolClient, poId: string, approvedBy: string, note?: string): Promise<void> {
+  async addApproval(tx: PoolClient, purchaseOrderId: string, approvedBy: string, note?: string): Promise<void> {
     await tx.query(
       `INSERT INTO approvals (po_id, approved_by, note) VALUES ($1, $2, $3)`,
-      [poId, approvedBy, note ?? null],
+      [purchaseOrderId, approvedBy, note ?? null],
     );
   }
 
-  async updateLineReceivedQty(tx: PoolClient, poId: string, productCode: string, receivedQty: number): Promise<void> {
+  async updateLineReceivedQty(tx: PoolClient, purchaseOrderId: string, productCode: string, receivedQty: number): Promise<void> {
     await tx.query(
       `UPDATE po_lines SET received_qty = $1, updated_at = NOW()
        WHERE po_id = $2 AND product_code = $3`,
-      [receivedQty, poId, productCode],
+      [receivedQty, purchaseOrderId, productCode],
     );
   }
 }

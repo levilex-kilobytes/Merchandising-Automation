@@ -4,12 +4,12 @@ import { Link } from 'react-router-dom';
 import { receivingApi } from '../api/receiving';
 import { StatusBadge } from '../components/StatusBadge';
 
-export function GRNList() {
+export function GoodsReceivedNoteList() {
   const [status, setStatus] = useState('');
 
   const { data: grns, isLoading, error } = useQuery({
     queryKey: ['grns', { status }],
-    queryFn: () => receivingApi.listGRNs({ status: status || undefined }),
+    queryFn: () => receivingApi.listGoodsReceivedNotes({ status: status || undefined }),
   });
 
   return (
@@ -45,7 +45,7 @@ export function GRNList() {
         <table>
           <thead>
             <tr>
-              <th>GRN</th>
+              <th>GoodsReceivedNote</th>
               <th>PO</th>
               <th>Status</th>
               <th>Shortages</th>
@@ -61,7 +61,7 @@ export function GRNList() {
                     <code>{g.id.slice(0, 8)}</code>
                   </Link>
                 </td>
-                <td><code>{g.poId.slice(0, 8)}</code></td>
+                <td><code>{g.purchaseOrderId.slice(0, 8)}</code></td>
                 <td><StatusBadge status={g.status} /></td>
                 <td>{g.shortages > 0 ? <strong style={{ color: 'var(--warning)' }}>{g.shortages}</strong> : '—'}</td>
                 <td>{g.damages > 0 ? <strong style={{ color: 'var(--danger)' }}>{g.damages}</strong> : '—'}</td>

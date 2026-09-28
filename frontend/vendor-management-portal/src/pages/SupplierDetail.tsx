@@ -3,11 +3,21 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { vendorApi } from '../api/vendor';
 import { StatusBadge } from '../components/StatusBadge';
+import { ProductFormModal } from '../components/ProductFormModal';
+import { ChangePriceModal } from '../components/ChangePriceModal';
+import { SupplierFormModal } from '../components/SupplierFormModal';
+import { useToast } from '../components/Toast';
+import { SupplierProduct } from '../api/types';
 
 export function SupplierDetail() {
   const { id } = useParams<{ id: string }>();
   const qc = useQueryClient();
+  const toast = useToast();
   const [selectedProduct, setSelectedProduct] = useState<string | null>(null);
+  const [showAddProduct, setShowAddProduct] = useState(false);
+  const [showEditSupplier, setShowEditSupplier] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<SupplierProduct | null>(null);
+  const [changingPriceProduct, setChangingPriceProduct] = useState<SupplierProduct | null>(null);
 
   const { data: supplier, isLoading } = useQuery({
     queryKey: ['supplier', id],
@@ -32,7 +42,9 @@ export function SupplierDetail() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['supplier', id] });
       qc.invalidateQueries({ queryKey: ['suppliers'] });
+      toast.success('Supplier deactivated');
     },
+    onError: (err: Error) => toast.error(err.message),
   });
 
   if (isLoading || !supplier) return <div className="loading">Loading...</div>;
@@ -45,7 +57,11 @@ export function SupplierDetail() {
           <br />
           {supplier.name}
         </h2>
-        {supplier.status === 'active' && (
+        <div style={{ display: 'flex', gap: 12 }}>
+          <button className="btn-secondary" onClick={() => setShowEditSupplier(true)}>
+            Edit
+          </button>
+          {supplier.status === 'active' && (
           <button
             className="btn-danger"
             onClick={() => {
@@ -55,7 +71,8 @@ export function SupplierDetail() {
           >
             Deactivate
           </button>
-        )}
+          )}
+        </div>
       </div>
 
       <div className="card">
@@ -79,10 +96,26 @@ export function SupplierDetail() {
       </div>
 
       <div className="card">
-        <h3 style={{ marginBottom: 16 }}>Product Catalog ({products?.length ?? 0})</h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+          <h3>Product Catalog ({products?.length ?? 0})</h3>
+          <button className="btn-primary" onClick={() => setShowAddProduct(true)}>
+            + Add Product
+          </button>
+        </div>
+
         {products && products.length === 0 && (
-          <div className="empty">No products in this supplier's catalog yet.</div>
+          <div className="empty">
+            <p>No products in this supplier's catalog yet.</p>
+            <button
+              className="btn-primary"
+              style={{ marginTop: 16 }}
+              onClick={() => setShowAddProduct(true)}
+            >
+              Add the first product
+            </button>
+          </div>
         )}
+
         {products && products.length > 0 && (
           <table>
             <thead>
@@ -106,13 +139,29 @@ export function SupplierDetail() {
                   <td>{p.leadTimeDays} days</td>
                   <td>{p.minOrderQty}</td>
                   <td>
-                    <button
-                      className="btn-secondary"
-                      style={{ padding: '4px 10px', fontSize: 12 }}
-                      onClick={() => setSelectedProduct(p.productCode)}
-                    >
-                      Price history
-                    </button>
+                    <div style={{ display: 'flex', gap: 6 }}>
+                      <button
+                        className="btn-secondary"
+                        style={{ padding: '4px 10px', fontSize: 12 }}
+                        onClick={() => setEditingProduct(p)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="btn-secondary"
+                        style={{ padding: '4px 10px', fontSize: 12 }}
+                        onClick={() => setChangingPriceProduct(p)}
+                      >
+                        Change price
+                      </button>
+                      <button
+                        className="btn-secondary"
+                        style={{ padding: '4px 10px', fontSize: 12 }}
+                        onClick={() => setSelectedProduct(p.productCode)}
+                      >
+                        History
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -123,9 +172,12 @@ export function SupplierDetail() {
 
       {selectedProduct && (
         <div className="card">
-          <h3 style={{ marginBottom: 16 }}>
-            Price history — <code>{selectedProduct}</code>
-          </h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+            <h3>Price history — <code>{selectedProduct}</code></h3>
+            <button className="btn-secondary" onClick={() => setSelectedProduct(null)}>
+              Close
+            </button>
+          </div>
           {priceHistory && priceHistory.length === 0 && (
             <div className="empty">No price changes recorded.</div>
           )}
@@ -154,6 +206,35 @@ export function SupplierDetail() {
             </table>
           )}
         </div>
+      )}
+
+      {showAddProduct && (
+        <ProductFormModal
+          supplierId={id!}
+          defaultCurrency={supplier.defaultCurrency}
+          onClose={() => setShowAddProduct(false)}
+        />
+      )}
+
+      {editingProduct && (
+        <ProductFormModal
+          supplierId={id!}
+          defaultCurrency={supplier.defaultCurrency}
+          product={editingProduct}
+          onClose={() => setEditingProduct(null)}
+        />
+      )}
+
+      {showEditSupplier && (
+        <SupplierFormModal supplier={supplier} onClose={() => setShowEditSupplier(false)} />
+      )}
+
+      {changingPriceProduct && (
+        <ChangePriceModal
+          supplierId={id!}
+          product={changingPriceProduct}
+          onClose={() => setChangingPriceProduct(null)}
+        />
       )}
     </>
   );

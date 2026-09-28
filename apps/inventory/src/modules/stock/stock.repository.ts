@@ -18,7 +18,44 @@ export class StockRepository {
   }
 
   async incrementOnHand(tx: PoolClient, id: string, delta: number): Promise<StockItem> {
-    const { rows } = await tx.query<StockItemRow>(`UPDATE stock_items SET on_hand = on_hand + $1, updated_at = NOW() WHERE id = $2 RETURNING *`, [delta, id]);
+    let rows: StockItemRow[];
+    try {
+      const result = await tx.query<StockItemRow>(
+        `UPDATE stock_items
+         SET on_hand = on_hand + $1, updated_at = NOW()
+         WHERE id = $2 AND on_hand + $1 >= 0
+         RETURNING *`,
+        [delta, id],
+      );
+      rows = result.rows;
+    } catch (err: any) {
+      // Postgres CHECK constraint violation — convert to a domain error
+      if (err?.code === '23514') {
+        const { rows: existing } = await tx.query<StockItemRow>(
+          `SELECT on_hand FROM stock_items WHERE id = $1`,
+          [id],
+        );
+        const onHand = existing[0]?.on_hand ?? 0;
+        throw new ConflictError(
+          `Insufficient stock: cannot apply ${delta}, current on_hand is ${onHand}`,
+        );
+      }
+      throw err;
+    }
+
+    if (!rows[0]) {
+      const { rows: existing } = await tx.query<StockItemRow>(
+        `SELECT on_hand FROM stock_items WHERE id = $1`,
+        [id],
+      );
+      if (!existing[0]) {
+        throw new NotFoundError(`Stock item ${id} not found`);
+      }
+      throw new ConflictError(
+        `Insufficient stock: cannot apply ${delta}, current on_hand is ${existing[0].on_hand}`,
+      );
+    }
+
     return toStockItem(rows[0]);
   }
 

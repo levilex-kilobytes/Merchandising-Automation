@@ -1,60 +1,60 @@
 import { PoolClient } from 'pg';
 import { pool, withTransaction } from '../../config/database';
-import { GRNRow, GRNLineRow, toGRN, toGRNLine } from './grn.model';
-import { GRN, GRNLine, ListGRNQueryDto, GRNStatus } from './grn.types';
+import { GoodsReceivedNoteRow, GoodsReceivedNoteLineRow, toGRN, toGRNLine } from './goods-received-note.model';
+import { GoodsReceivedNote, GoodsReceivedNoteLine, ListGRNQueryDto, GoodsReceivedNoteStatus } from './goods-received-note.types';
 
-export class GRNRepository {
+export class GoodsReceivedNoteRepository {
   withTransaction = withTransaction;
 
   async create(
     tx: PoolClient,
-    input: { poId: string; supplierId: string; supplierName: string; notes?: string },
-  ): Promise<GRN> {
-    const { rows } = await tx.query<GRNRow>(
+    input: { purchaseOrderId: string; supplierId: string; supplierName: string; notes?: string },
+  ): Promise<GoodsReceivedNote> {
+    const { rows } = await tx.query<GoodsReceivedNoteRow>(
       `INSERT INTO grns (po_id, supplier_id, supplier_name, status, notes)
        VALUES ($1, $2, $3, 'draft', $4)
        RETURNING *`,
-      [input.poId, input.supplierId, input.supplierName, input.notes ?? null],
+      [input.purchaseOrderId, input.supplierId, input.supplierName, input.notes ?? null],
     );
     return toGRN(rows[0]);
   }
 
   async addLine(
     tx: PoolClient,
-    grnId: string,
+    goodsReceivedNoteId: string,
     line: {
       productCode: string;
       productName: string;
       orderedQty: number;
       unitCost: number;
     },
-  ): Promise<GRNLine> {
-    const { rows } = await tx.query<GRNLineRow>(
+  ): Promise<GoodsReceivedNoteLine> {
+    const { rows } = await tx.query<GoodsReceivedNoteLineRow>(
       `INSERT INTO grn_lines
         (grn_id, product_code, product_name, ordered_qty, received_qty, damaged_qty, condition, unit_cost, line_total)
        VALUES ($1,$2,$3,$4,0,0,'good',$5,0)
        RETURNING *`,
-      [grnId, line.productCode, line.productName, line.orderedQty, line.unitCost],
+      [goodsReceivedNoteId, line.productCode, line.productName, line.orderedQty, line.unitCost],
     );
     return toGRNLine(rows[0]);
   }
 
-  async recordLine(
+  async recordGoodsReceivedNoteLine(
     tx: PoolClient,
-    grnId: string,
+    goodsReceivedNoteId: string,
     productCode: string,
     input: { receivedQty: number; damagedQty?: number; condition: string; notes?: string },
-  ): Promise<GRNLine> {
-    const { rows: currentRows } = await tx.query<GRNLineRow>(
+  ): Promise<GoodsReceivedNoteLine> {
+    const { rows: currentRows } = await tx.query<GoodsReceivedNoteLineRow>(
       `SELECT * FROM grn_lines WHERE grn_id = $1 AND product_code = $2 FOR UPDATE`,
-      [grnId, productCode],
+      [goodsReceivedNoteId, productCode],
     );
-    if (!currentRows[0]) throw new Error(`GRN line ${productCode} not found`);
+    if (!currentRows[0]) throw new Error(`GoodsReceivedNote line ${productCode} not found`);
 
     const unitCost = Number(currentRows[0].unit_cost);
     const lineTotal = Number((input.receivedQty * unitCost).toFixed(2));
 
-    const { rows } = await tx.query<GRNLineRow>(
+    const { rows } = await tx.query<GoodsReceivedNoteLineRow>(
       `UPDATE grn_lines
        SET received_qty = $1, damaged_qty = $2, condition = $3, line_total = $4, notes = $5, updated_at = NOW()
        WHERE grn_id = $6 AND product_code = $7
@@ -65,37 +65,37 @@ export class GRNRepository {
         input.condition,
         lineTotal,
         input.notes ?? null,
-        grnId,
+        goodsReceivedNoteId,
         productCode,
       ],
     );
     return toGRNLine(rows[0]);
   }
 
-  async findById(id: string, tx?: PoolClient): Promise<GRN | null> {
+  async findById(id: string, tx?: PoolClient): Promise<GoodsReceivedNote | null> {
     const client = tx ?? pool;
-    const { rows } = await client.query<GRNRow>(`SELECT * FROM grns WHERE id = $1`, [id]);
+    const { rows } = await client.query<GoodsReceivedNoteRow>(`SELECT * FROM grns WHERE id = $1`, [id]);
     if (!rows[0]) return null;
-    const { rows: lines } = await client.query<GRNLineRow>(
+    const { rows: lines } = await client.query<GoodsReceivedNoteLineRow>(
       `SELECT * FROM grn_lines WHERE grn_id = $1 ORDER BY product_code ASC`,
       [id],
     );
     return toGRN(rows[0], lines);
   }
 
-  async list(filter: ListGRNQueryDto): Promise<GRN[]> {
+  async list(filter: ListGRNQueryDto): Promise<GoodsReceivedNote[]> {
     const conditions: string[] = [];
     const params: unknown[] = [];
     if (filter.status) {
       params.push(filter.status);
       conditions.push(`status = $${params.length}`);
     }
-    if (filter.poId) {
-      params.push(filter.poId);
+    if (filter.purchaseOrderId) {
+      params.push(filter.purchaseOrderId);
       conditions.push(`po_id = $${params.length}`);
     }
     const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : '';
-    const { rows } = await pool.query<GRNRow>(
+    const { rows } = await pool.query<GoodsReceivedNoteRow>(
       `SELECT * FROM grns ${where} ORDER BY created_at DESC`,
       params,
     );
@@ -104,17 +104,17 @@ export class GRNRepository {
 
   async updateDiscrepancies(
     tx: PoolClient,
-    grnId: string,
+    goodsReceivedNoteId: string,
     discrepancies: { shortages: number; overages: number; damages: number },
   ): Promise<void> {
     await tx.query(
       `UPDATE grns SET shortages = $1, overages = $2, damages = $3, updated_at = NOW() WHERE id = $4`,
-      [discrepancies.shortages, discrepancies.overages, discrepancies.damages, grnId],
+      [discrepancies.shortages, discrepancies.overages, discrepancies.damages, goodsReceivedNoteId],
     );
   }
 
-  async complete(tx: PoolClient, id: string): Promise<GRN> {
-    const { rows } = await tx.query<GRNRow>(
+  async complete(tx: PoolClient, id: string): Promise<GoodsReceivedNote> {
+    const { rows } = await tx.query<GoodsReceivedNoteRow>(
       `UPDATE grns
        SET status = 'completed', received_at = NOW(), completed_at = NOW(), updated_at = NOW()
        WHERE id = $1 RETURNING *`,

@@ -1,7 +1,7 @@
 import { StockRepository } from './stock.repository';
 import { OutboxRepository } from '../../shared/outbox.repository';
 import { StockItem, StockMovement, AdjustmentDto, ListStockQueryDto, ReceiveStockInput } from './stock.types';
-import { NotFoundError } from '@mfa/errors';
+import { ConflictError, NotFoundError } from '@mfa/errors';
 import { config } from '../../config';
 
 export class StockService {
@@ -33,17 +33,58 @@ export class StockService {
 
   async adjustStock(input: AdjustmentDto): Promise<StockItem> {
     return this.repo.withTransaction(async (tx) => {
-      const item = await this.repo.findByProductAndLocation(input.productCode, input.locationCode, tx);
-      if (!item) throw new NotFoundError(`Stock item ${input.productCode} @ ${input.locationCode} not found`);
+      const item = await this.repo.findByProductAndLocation(
+        input.productCode,
+        input.locationCode,
+        tx,
+      );
+      if (!item) {
+        throw new NotFoundError(
+          `Stock item ${input.productCode} @ ${input.locationCode} not found`,
+        );
+      }
+
+      if (item.onHand + input.delta < 0) {
+        throw new ConflictError(
+          `Cannot adjust by ${input.delta}: only ${item.onHand} units on hand`,
+        );
+      }
+
       const updated = await this.repo.incrementOnHand(tx, item.id, input.delta);
+
       await this.repo.recordMovement(tx, {
-        productCode: input.productCode, locationCode: input.locationCode,
-        movementType: 'adjusted', quantity: input.delta, notes: input.reason,
+        productCode: input.productCode,
+        locationCode: input.locationCode,
+        movementType: 'adjusted',
+        quantity: input.delta,
+        notes: input.reason,
       });
+
       await this.outbox.enqueue(tx, {
-        eventType: 'inventory.stock.adjusted', aggregateId: item.id,
-        payload: { productCode: input.productCode, locationCode: input.locationCode, delta: input.delta, newOnHand: updated.onHand, reason: input.reason },
+        eventType: 'inventory.stock.adjusted',
+        aggregateId: item.id,
+        payload: {
+          productCode: input.productCode,
+          locationCode: input.locationCode,
+          delta: input.delta,
+          newOnHand: updated.onHand,
+          reason: input.reason,
+        },
       });
+
+      if (updated.available <= updated.lowStockThreshold) {
+        await this.outbox.enqueue(tx, {
+          eventType: 'inventory.stock.low',
+          aggregateId: item.id,
+          payload: {
+            productCode: updated.productCode,
+            locationCode: updated.locationCode,
+            available: updated.available,
+            threshold: updated.lowStockThreshold,
+          },
+        });
+      }
+
       return updated;
     });
   }

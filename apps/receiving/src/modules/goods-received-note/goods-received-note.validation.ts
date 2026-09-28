@@ -1,8 +1,8 @@
 import { z } from 'zod';
-import { CreateGRNDto, RecordLineDto, ListGRNQueryDto } from './grn.types';
+import { CreateGoodsReceivedNoteDto, RecordLineDto, ListGRNQueryDto } from './goods-received-note.types';
 
-export const CreateGRNSchema: z.ZodType<CreateGRNDto> = z.object({
-  poId: z.string().uuid(),
+export const CreateGRNSchema: z.ZodType<CreateGoodsReceivedNoteDto> = z.object({
+  purchaseOrderId: z.string().uuid(),
   notes: z.string().optional(),
 });
 
@@ -16,5 +16,5 @@ export const RecordLineSchema: z.ZodType<RecordLineDto> = z.object({
 
 export const ListGRNQuerySchema: z.ZodType<ListGRNQueryDto> = z.object({
   status: z.enum(['draft', 'completed']).optional(),
-  poId: z.string().uuid().optional(),
+  purchaseOrderId: z.string().uuid().optional(),
 });

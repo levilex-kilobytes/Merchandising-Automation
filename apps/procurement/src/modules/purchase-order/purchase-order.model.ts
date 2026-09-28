@@ -1,6 +1,6 @@
-import { PurchaseOrder, POLine } from './purchase-order.types';
+import { PurchaseOrder, PurchaseOrderLine } from './purchase-order.types';
 
-export interface PORow {
+export interface PurchaseOrderRow {
   id: string;
   supplier_id: string;
   supplier_name: string;
@@ -19,7 +19,7 @@ export interface PORow {
   updated_at: Date;
 }
 
-export interface POLineRow {
+export interface PurchaseOrderLineRow {
   id: string;
   po_id: string;
   product_code: string;
@@ -33,7 +33,7 @@ export interface POLineRow {
   updated_at: Date;
 }
 
-export function toPurchaseOrder(row: PORow, lines?: POLineRow[]): PurchaseOrder {
+export function toPurchaseOrder(row: PurchaseOrderRow, lines?: PurchaseOrderLineRow[]): PurchaseOrder {
   return {
     id: row.id,
     supplierId: row.supplier_id,
@@ -55,10 +55,10 @@ export function toPurchaseOrder(row: PORow, lines?: POLineRow[]): PurchaseOrder 
   };
 }
 
-export function toPOLine(row: POLineRow): POLine {
+export function toPOLine(row: PurchaseOrderLineRow): PurchaseOrderLine {
   return {
     id: row.id,
-    poId: row.po_id,
+    purchaseOrderId: row.po_id,
     productCode: row.product_code,
     productName: row.product_name,
     orderedQty: row.ordered_qty,

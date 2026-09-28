@@ -3,8 +3,8 @@ import { Logger } from '@mfa/logger';
 import { PurchaseOrderService } from '../../modules/purchase-order/purchase-order.service';
 
 interface GrnCompletedPayload {
-  grnId: string;
-  poId: string;
+  goodsReceivedNoteId: string;
+  purchaseOrderId: string;
   supplierId: string;
   lines?: Array<{ productCode: string; receivedQty: number }>;
 }
@@ -14,17 +14,17 @@ export async function registerGrnCompletedHandler(
   logger: Logger,
   service: PurchaseOrderService,
 ): Promise<void> {
-  await bus.subscribe<GrnCompletedPayload>('receiving.grn.completed', async (event) => {
+  await bus.subscribe<GrnCompletedPayload>('receiving.goods-received-note.completed', async (event) => {
     const p = event.payload;
     try {
       if (p.lines) {
         for (const line of p.lines) {
-          await service.recordReceipt(p.poId, line.productCode, line.receivedQty);
+          await service.recordReceipt(p.purchaseOrderId, line.productCode, line.receivedQty);
         }
       }
-      logger.info('PO receipt recorded', { poId: p.poId, grnId: p.grnId });
+      logger.info('Purchase order receipt recorded', { purchaseOrderId: p.purchaseOrderId, goodsReceivedNoteId: p.goodsReceivedNoteId });
     } catch (err) {
-      logger.error('Failed to record PO receipt', { poId: p.poId, err: String(err) });
+      logger.error('Failed to record purchase order receipt', { purchaseOrderId: p.purchaseOrderId, err: String(err) });
       throw err;
     }
   });

@@ -59,3 +59,27 @@ export interface CreateSupplierDto {
   defaultCurrency: string;
   notes?: string;
 }
+
+export interface CreateSupplierProductDto {
+  productCode: string;
+  productName: string;
+  unitCost: number;
+  currency: string;
+  leadTimeDays: number;
+  minOrderQty: number;
+}
+
+export interface UpdateSupplierProductDto {
+  productName?: string;
+  unitCost?: number;
+  currency?: string;
+  leadTimeDays?: number;
+  minOrderQty?: number;
+  isActive?: boolean;
+}
+
+export interface ChangePriceDto {
+  newCost: number;
+  currency?: string;
+  effectiveFrom?: string;
+}

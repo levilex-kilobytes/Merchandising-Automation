@@ -1,12 +1,12 @@
-export type GRNStatus = 'draft' | 'completed';
+export type GoodsReceivedNoteStatus = 'draft' | 'completed';
 export type ItemCondition = 'good' | 'damaged';
 
-export interface GRN {
+export interface GoodsReceivedNote {
   id: string;
-  poId: string;
+  purchaseOrderId: string;
   supplierId: string;
   supplierName: string;
-  status: GRNStatus;
+  status: GoodsReceivedNoteStatus;
   receivedAt: Date | null;
   shortages: number;
   overages: number;
@@ -15,12 +15,12 @@ export interface GRN {
   completedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
-  lines?: GRNLine[];
+  lines?: GoodsReceivedNoteLine[];
 }
 
-export interface GRNLine {
+export interface GoodsReceivedNoteLine {
   id: string;
-  grnId: string;
+  goodsReceivedNoteId: string;
   productCode: string;
   productName: string;
   orderedQty: number;
@@ -34,8 +34,8 @@ export interface GRNLine {
   updatedAt: Date;
 }
 
-export interface CreateGRNDto {
-  poId: string;
+export interface CreateGoodsReceivedNoteDto {
+  purchaseOrderId: string;
   notes?: string;
 }
 
@@ -48,6 +48,6 @@ export interface RecordLineDto {
 }
 
 export interface ListGRNQueryDto {
-  status?: GRNStatus;
-  poId?: string;
+  status?: GoodsReceivedNoteStatus;
+  purchaseOrderId?: string;
 }

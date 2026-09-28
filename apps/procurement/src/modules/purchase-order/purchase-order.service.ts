@@ -1,7 +1,7 @@
 import { PurchaseOrderRepository } from './purchase-order.repository';
 import { OutboxRepository } from '../../shared/outbox.repository';
 import { VendorClient } from '../../grpc/vendor.client';
-import { PurchaseOrder, CreatePODto, ListPOQueryDto, ApprovePODto, CancelPODto } from './purchase-order.types';
+import { PurchaseOrder, CreatePurchaseOrderDto, ListPurchaseOrdersQueryDto, ApprovePurchaseOrderDto, CancelPurchaseOrderDto } from './purchase-order.types';
 import { ConflictError, NotFoundError, AppError } from '@mfa/errors';
 
 export class PurchaseOrderService {
@@ -11,12 +11,12 @@ export class PurchaseOrderService {
     private readonly vendor = new VendorClient(),
   ) {}
 
-  async createPurchaseOrder(input: CreatePODto): Promise<PurchaseOrder> {
+  async createPurchaseOrder(input: CreatePurchaseOrderDto): Promise<PurchaseOrder> {
     const supplier = await this.vendor.getSupplier(input.supplierId).catch(() => null);
     if (!supplier) throw new NotFoundError(`Supplier ${input.supplierId} not found in Vendor`);
 
     return this.repo.withTransaction(async (tx) => {
-      const po = await this.repo.createPO(tx, {
+      const po = await this.repo.createPurchaseOrder(tx, {
         supplierId: supplier.id,
         supplierName: supplier.name,
         currency: input.currency,
@@ -44,10 +44,10 @@ export class PurchaseOrderService {
       const totalCost = await this.repo.recalculateTotal(tx, po.id);
 
       await this.outbox.enqueue(tx, {
-        eventType: 'procurement.po.created',
+        eventType: 'procurement.purchase-order.created',
         aggregateId: po.id,
         payload: {
-          poId: po.id,
+          purchaseOrderId: po.id,
           supplierId: supplier.id,
           supplierName: supplier.name,
           totalCost,
@@ -66,28 +66,28 @@ export class PurchaseOrderService {
     return po;
   }
 
-  async listPurchaseOrders(filter: ListPOQueryDto): Promise<PurchaseOrder[]> {
+  async listPurchaseOrders(filter: ListPurchaseOrdersQueryDto): Promise<PurchaseOrder[]> {
     return this.repo.list(filter);
   }
 
   async submitForApproval(id: string): Promise<PurchaseOrder> {
     const po = await this.getPurchaseOrder(id);
-    if (po.status !== 'draft') throw new ConflictError(`Cannot submit PO in status ${po.status}`);
+    if (po.status !== 'draft') throw new ConflictError(`Cannot submit purchase order in status ${po.status}`);
 
     return this.repo.withTransaction(async (tx) => {
       const updated = await this.repo.updateStatus(tx, id, 'pending');
       await this.outbox.enqueue(tx, {
-        eventType: 'procurement.po.submitted',
+        eventType: 'procurement.purchase-order.submitted',
         aggregateId: id,
-        payload: { poId: id, supplierId: po.supplierId, totalCost: po.totalCost },
+        payload: { purchaseOrderId: id, supplierId: po.supplierId, totalCost: po.totalCost },
       });
       return updated;
     });
   }
 
-  async approvePurchaseOrder(id: string, input: ApprovePODto): Promise<PurchaseOrder> {
+  async approvePurchaseOrder(id: string, input: ApprovePurchaseOrderDto): Promise<PurchaseOrder> {
     const po = await this.getPurchaseOrder(id);
-    if (po.status !== 'pending') throw new ConflictError(`Cannot approve PO in status ${po.status}`);
+    if (po.status !== 'pending') throw new ConflictError(`Cannot approve purchase order in status ${po.status}`);
 
     return this.repo.withTransaction(async (tx) => {
       await this.repo.addApproval(tx, id, input.approvedBy, input.note);
@@ -98,10 +98,10 @@ export class PurchaseOrderService {
       });
 
       await this.outbox.enqueue(tx, {
-        eventType: 'procurement.po.approved',
+        eventType: 'procurement.purchase-order.approved',
         aggregateId: id,
         payload: {
-          poId: id,
+          purchaseOrderId: id,
           supplierId: po.supplierId,
           supplierName: po.supplierName,
           totalCost: po.totalCost,
@@ -122,14 +122,14 @@ export class PurchaseOrderService {
 
   async sendPurchaseOrder(id: string): Promise<PurchaseOrder> {
     const po = await this.getPurchaseOrder(id);
-    if (po.status !== 'approved') throw new ConflictError(`Cannot send PO in status ${po.status}`);
+    if (po.status !== 'approved') throw new ConflictError(`Cannot send purchase order in status ${po.status}`);
 
     return this.repo.withTransaction(async (tx) => {
       const updated = await this.repo.updateStatus(tx, id, 'sent', { sentAt: new Date() });
       await this.outbox.enqueue(tx, {
-        eventType: 'procurement.po.sent',
+        eventType: 'procurement.purchase-order.sent',
         aggregateId: id,
-        payload: { poId: id, supplierId: po.supplierId, sentAt: new Date().toISOString() },
+        payload: { purchaseOrderId: id, supplierId: po.supplierId, sentAt: new Date().toISOString() },
       });
       return updated;
     });
@@ -138,24 +138,24 @@ export class PurchaseOrderService {
   async closePurchaseOrder(id: string): Promise<PurchaseOrder> {
     const po = await this.getPurchaseOrder(id);
     if (po.status !== 'sent' && po.status !== 'received') {
-      throw new ConflictError(`Cannot close PO in status ${po.status}`);
+      throw new ConflictError(`Cannot close purchase order in status ${po.status}`);
     }
 
     return this.repo.withTransaction(async (tx) => {
       const updated = await this.repo.updateStatus(tx, id, 'closed', { closedAt: new Date() });
       await this.outbox.enqueue(tx, {
-        eventType: 'procurement.po.closed',
+        eventType: 'procurement.purchase-order.closed',
         aggregateId: id,
-        payload: { poId: id, supplierId: po.supplierId },
+        payload: { purchaseOrderId: id, supplierId: po.supplierId },
       });
       return updated;
     });
   }
 
-  async cancelPurchaseOrder(id: string, input: CancelPODto): Promise<PurchaseOrder> {
+  async cancelPurchaseOrder(id: string, input: CancelPurchaseOrderDto): Promise<PurchaseOrder> {
     const po = await this.getPurchaseOrder(id);
     if (po.status === 'closed' || po.status === 'cancelled') {
-      throw new ConflictError(`Cannot cancel PO in status ${po.status}`);
+      throw new ConflictError(`Cannot cancel purchase order in status ${po.status}`);
     }
 
     return this.repo.withTransaction(async (tx) => {
@@ -164,21 +164,21 @@ export class PurchaseOrderService {
         cancellationReason: input.reason,
       });
       await this.outbox.enqueue(tx, {
-        eventType: 'procurement.po.cancelled',
+        eventType: 'procurement.purchase-order.cancelled',
         aggregateId: id,
-        payload: { poId: id, reason: input.reason },
+        payload: { purchaseOrderId: id, reason: input.reason },
       });
       return updated;
     });
   }
 
-  async recordReceipt(poId: string, productCode: string, receivedQty: number): Promise<void> {
+  async recordReceipt(purchaseOrderId: string, productCode: string, receivedQty: number): Promise<void> {
     await this.repo.withTransaction(async (tx) => {
-      await this.repo.updateLineReceivedQty(tx, poId, productCode, receivedQty);
+      await this.repo.updateLineReceivedQty(tx, purchaseOrderId, productCode, receivedQty);
       await this.outbox.enqueue(tx, {
-        eventType: 'procurement.po.received',
-        aggregateId: poId,
-        payload: { poId, productCode, receivedQty },
+        eventType: 'procurement.purchase-order.received',
+        aggregateId: purchaseOrderId,
+        payload: { purchaseOrderId, productCode, receivedQty },
       });
     });
   }

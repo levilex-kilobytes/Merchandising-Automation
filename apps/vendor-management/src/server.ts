@@ -11,7 +11,7 @@ import { RabbitMQEventBus } from '@mfa/event-bus';
 import { Logger } from '@mfa/logger';
 import { OutboxRepository } from './shared/outbox.repository';
 import { OutboxPublisher } from './events/publisher';
-import { registerGrnCompletedHandler } from './events/handlers/grn-completed.handler';
+import { registerGrnCompletedHandler } from './events/handlers/goods-received-note-completed.handler';
 import { buildVendorGrpcHandlers } from './grpc/vendor.grpc-handler';
 import { SupplierService } from './modules/supplier/supplier.service';
 import { SupplierProductService } from './modules/supplier-product/supplier-product.service';

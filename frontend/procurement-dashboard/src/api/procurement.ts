@@ -65,3 +65,23 @@ export const vendorApi = {
   listProducts: (supplierId: string) =>
     vendorRequest<VendorProduct[]>(`/suppliers/${supplierId}/products`),
 };
+
+
+export interface ReorderSuggestion {
+  id: string;
+  productCode: string;
+  locationCode: string;
+  currentQty: number;
+  threshold: number;
+  suggestedQty: number;
+  status: 'pending' | 'dismissed' | 'ordered';
+  createdAt: string;
+  resolvedAt: string | null;
+}
+
+export const reorderApi = {
+  listPending: () => procurementRequest<ReorderSuggestion[]>('/reorder-suggestions?status=pending'),
+  listAll: () => procurementRequest<ReorderSuggestion[]>('/reorder-suggestions'),
+  dismiss: (id: string) => procurementRequest<ReorderSuggestion>(`/reorder-suggestions/${id}/dismiss`, { method: 'POST' }),
+  markOrdered: (id: string) => procurementRequest<ReorderSuggestion>(`/reorder-suggestions/${id}/order`, { method: 'POST' }),
+};

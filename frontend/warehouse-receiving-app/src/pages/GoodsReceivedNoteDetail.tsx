@@ -1,23 +1,23 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
 import { receivingApi } from '../api/receiving';
 import { StatusBadge, ConditionBadge } from '../components/StatusBadge';
-import { GRNLine, ItemCondition } from '../api/types';
+import { GoodsReceivedNoteLine, ItemCondition } from '../api/types';
 
-export function GRNDetail() {
+export function GoodsReceivedNoteDetail() {
   const { id } = useParams<{ id: string }>();
   const qc = useQueryClient();
   const [editing, setEditing] = useState<string | null>(null);
 
   const { data: grn, isLoading } = useQuery({
     queryKey: ['grn', id],
-    queryFn: () => receivingApi.getGRN(id!),
+    queryFn: () => receivingApi.getGoodsReceivedNote(id!),
     enabled: !!id,
   });
 
   const complete = useMutation({
-    mutationFn: () => receivingApi.completeGRN(id!),
+    mutationFn: () => receivingApi.completeGoodsReceivedNote(id!),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['grn', id] });
       qc.invalidateQueries({ queryKey: ['grns'] });
@@ -25,6 +25,10 @@ export function GRNDetail() {
   });
 
   if (isLoading || !grn) return <div className="loading">Loading...</div>;
+
+  const hasUnrecordedLines = (grn.lines ?? []).some(
+    (l) => l.receivedQty === 0 && l.damagedQty === 0,
+  );
 
   return (
     <>
@@ -39,6 +43,12 @@ export function GRNDetail() {
 
       {complete.error && (
         <div className="error-box">{(complete.error as Error).message}</div>
+      )}
+
+      {hasUnrecordedLines && grn.status === 'draft' && (
+        <div className="error-box" style={{ background: '#fef3c7', borderColor: '#fcd34d', color: '#92400e' }}>
+          ⚠️ Record every line before completing this GRN.
+        </div>
       )}
 
       <div className="summary">
@@ -63,7 +73,7 @@ export function GRNDetail() {
       <div className="card">
         <h3 style={{ marginBottom: 16 }}>Purchase Order</h3>
         <dl className="detail-grid">
-          <dt>PO ID</dt><dd><code>{grn.poId}</code></dd>
+          <dt>PO ID</dt><dd><code>{grn.purchaseOrderId}</code></dd>
           <dt>Supplier</dt><dd>{grn.supplierName}</dd>
           <dt>Created</dt><dd>{new Date(grn.createdAt).toLocaleString()}</dd>
           {grn.completedAt && <><dt>Completed</dt><dd>{new Date(grn.completedAt).toLocaleString()}</dd></>}
@@ -134,7 +144,7 @@ export function GRNDetail() {
                   complete.mutate();
                 }
               }}
-              disabled={complete.isPending}
+              disabled={complete.isPending || hasUnrecordedLines}
             >
               {complete.isPending ? 'Completing...' : 'Complete GRN'}
             </button>
@@ -158,7 +168,7 @@ function RecordLineModal({
   onSuccess,
 }: {
   grnId: string;
-  line: GRNLine;
+  line: GoodsReceivedNoteLine;
   onClose: () => void;
   onSuccess: () => void;
 }) {
@@ -169,7 +179,7 @@ function RecordLineModal({
 
   const save = useMutation({
     mutationFn: () =>
-      receivingApi.recordLine(grnId, {
+      receivingApi.recordGoodsReceivedNoteLine(grnId, {
         productCode: line.productCode,
         receivedQty: qty,
         damagedQty: damaged,
@@ -213,27 +223,9 @@ function RecordLineModal({
         <div className="field">
           <label>Received Quantity</label>
           <div className="qty-controls">
-            <button
-              type="button"
-              className="qty-btn"
-              onClick={() => setQty(Math.max(0, qty - 1))}
-            >
-              −
-            </button>
-            <input
-              type="number"
-              min={0}
-              value={qty}
-              onChange={(e) => setQty(parseInt(e.target.value) || 0)}
-              className="qty-input"
-            />
-            <button
-              type="button"
-              className="qty-btn"
-              onClick={() => setQty(qty + 1)}
-            >
-              +
-            </button>
+            <button type="button" className="qty-btn" onClick={() => setQty(Math.max(0, qty - 1))}>−</button>
+            <input type="number" min={0} value={qty} onChange={(e) => setQty(parseInt(e.target.value) || 0)} className="qty-input" />
+            <button type="button" className="qty-btn" onClick={() => setQty(qty + 1)}>+</button>
           </div>
         </div>
 
@@ -248,35 +240,18 @@ function RecordLineModal({
         {condition === 'damaged' && (
           <div className="field">
             <label>Damaged Quantity</label>
-            <input
-              type="number"
-              min={0}
-              value={damaged}
-              onChange={(e) => setDamaged(parseInt(e.target.value) || 0)}
-            />
+            <input type="number" min={0} value={damaged} onChange={(e) => setDamaged(parseInt(e.target.value) || 0)} />
           </div>
         )}
 
         <div className="field">
           <label>Notes (optional)</label>
-          <textarea
-            rows={2}
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            placeholder="e.g., 5 units missing from shipment"
-          />
+          <textarea rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="e.g., 5 units missing from shipment" />
         </div>
 
         <div className="actions" style={{ justifyContent: 'flex-end' }}>
-          <button type="button" className="btn-secondary" onClick={onClose}>
-            Cancel
-          </button>
-          <button
-            type="button"
-            className="btn-primary"
-            onClick={() => save.mutate()}
-            disabled={save.isPending}
-          >
+          <button type="button" className="btn-secondary" onClick={onClose}>Cancel</button>
+          <button type="button" className="btn-primary" onClick={() => save.mutate()} disabled={save.isPending}>
             {save.isPending ? 'Saving...' : 'Save'}
           </button>
         </div>

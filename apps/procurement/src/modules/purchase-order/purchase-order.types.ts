@@ -1,10 +1,10 @@
-export type POStatus = 'draft' | 'pending' | 'approved' | 'sent' | 'received' | 'closed' | 'cancelled';
+export type PurchaseOrderStatus = 'draft' | 'pending' | 'approved' | 'sent' | 'received' | 'closed' | 'cancelled';
 
 export interface PurchaseOrder {
   id: string;
   supplierId: string;
   supplierName: string;
-  status: POStatus;
+  status: PurchaseOrderStatus;
   currency: string;
   totalCost: number;
   expectedDate: Date;
@@ -17,12 +17,12 @@ export interface PurchaseOrder {
   cancellationReason?: string | null;
   createdAt: Date;
   updatedAt: Date;
-  lines?: POLine[];
+  lines?: PurchaseOrderLine[];
 }
 
-export interface POLine {
+export interface PurchaseOrderLine {
   id: string;
-  poId: string;
+  purchaseOrderId: string;
   productCode: string;
   productName: string;
   orderedQty: number;
@@ -34,29 +34,29 @@ export interface POLine {
   updatedAt: Date;
 }
 
-export interface CreatePOLineDto {
+export interface CreatePurchaseOrderLineDto {
   productCode: string;
   quantity: number;
 }
 
-export interface CreatePODto {
+export interface CreatePurchaseOrderDto {
   supplierId: string;
   currency: string;
   expectedDate: string;
   notes?: string;
-  lines: CreatePOLineDto[];
+  lines: CreatePurchaseOrderLineDto[];
 }
 
-export interface ApprovePODto {
+export interface ApprovePurchaseOrderDto {
   approvedBy: string;
   note?: string;
 }
 
-export interface CancelPODto {
+export interface CancelPurchaseOrderDto {
   reason: string;
 }
 
-export interface ListPOQueryDto {
-  status?: POStatus;
+export interface ListPurchaseOrdersQueryDto {
+  status?: PurchaseOrderStatus;
   supplierId?: string;
 }
