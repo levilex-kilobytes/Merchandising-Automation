@@ -1,18 +1,18 @@
 import * as grpc from '@grpc/grpc-js';
-import { GRNService } from '../modules/grn/grn.service';
+import { GoodsReceivedNoteService } from '../modules/goods-received-note/goods-received-note.service';
 
 interface GetGRNRequest { id: string }
 interface ListGRNsByPORequest { po_id: string }
 type GrpcCallback = (err: unknown, response?: unknown) => void;
 
-export function buildReceivingGrpcHandlers(service: GRNService) {
+export function buildReceivingGrpcHandlers(service: GoodsReceivedNoteService) {
   return {
     GetGRN: async (call: { request: GetGRNRequest }, callback: GrpcCallback): Promise<void> => {
       try {
-        const grn = await service.getGRN(call.request.id);
+        const grn = await service.getGoodsReceivedNote(call.request.id);
         callback(null, {
           id: grn.id,
-          po_id: grn.poId,
+          po_id: grn.purchaseOrderId,
           supplier_id: grn.supplierId,
           status: grn.status,
           received_at: grn.receivedAt?.toISOString() ?? '',
@@ -27,11 +27,11 @@ export function buildReceivingGrpcHandlers(service: GRNService) {
 
     ListGRNsByPO: async (call: { request: ListGRNsByPORequest }, callback: GrpcCallback): Promise<void> => {
       try {
-        const list = await service.listGRNs({ poId: call.request.po_id });
+        const list = await service.listGoodsReceivedNotes({ purchaseOrderId: call.request.po_id });
         callback(null, {
           grns: list.map((g) => ({
             id: g.id,
-            po_id: g.poId,
+            po_id: g.purchaseOrderId,
             supplier_id: g.supplierId,
             status: g.status,
             received_at: g.receivedAt?.toISOString() ?? '',

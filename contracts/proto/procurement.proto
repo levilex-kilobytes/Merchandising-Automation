@@ -3,7 +3,7 @@ package mfa.procurement.v1;
 
 service ProcurementService {
   rpc GetPurchaseOrder (GetPurchaseOrderRequest) returns (PurchaseOrderReply);
-  rpc GetPOExpectedItems (GetPOExpectedItemsRequest) returns (GetPOExpectedItemsReply);
+  rpc GetPurchaseOrderExpectedItems (GetPOExpectedItemsRequest) returns (GetPOExpectedItemsReply);
 }
 
 message GetPurchaseOrderRequest {
@@ -13,17 +13,18 @@ message GetPurchaseOrderRequest {
 message PurchaseOrderReply {
   string id = 1;
   string supplier_id = 2;
-  string status = 3;
-  string currency = 4;
-  double total_cost = 5;
-  string expected_date = 6;
+  string supplier_name = 3;
+  string status = 4;
+  string currency = 5;
+  double total_cost = 6;
+  string expected_date = 7;
 }
 
 message GetPOExpectedItemsRequest {
   string po_id = 1;
 }
 
-message POExpectedItem {
+message PurchaseOrderExpectedItem {
   string product_code = 1;
   int32 ordered_qty = 2;
   int32 received_qty = 3;
@@ -31,5 +32,5 @@ message POExpectedItem {
 }
 
 message GetPOExpectedItemsReply {
-  repeated POExpectedItem items = 1;
+  repeated PurchaseOrderExpectedItem items = 1;
 }

@@ -4,6 +4,7 @@ import { POList } from './pages/POList';
 import { PODetail } from './pages/PODetail';
 import { CreatePO } from './pages/CreatePO';
 import { ApprovalQueue } from './pages/ApprovalQueue';
+import { ReorderSuggestions } from './pages/ReorderSuggestions';
 
 export default function App() {
   return (
@@ -13,6 +14,7 @@ export default function App() {
         <Route path="/purchase-orders/new" element={<CreatePO />} />
         <Route path="/purchase-orders/:id" element={<PODetail />} />
         <Route path="/approvals" element={<ApprovalQueue />} />
+        <Route path="/reorder" element={<ReorderSuggestions />} />
       </Routes>
     </Layout>
   );

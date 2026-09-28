@@ -49,16 +49,11 @@ export function CreatePO() {
   });
 
   const updateLine = (idx: number, patch: Partial<LineForm>) => {
-    setLines((prev) =>
-      prev.map((l, i) => (i === idx ? { ...l, ...patch } : l)),
-    );
+    setLines((prev) => prev.map((l, i) => (i === idx ? { ...l, ...patch } : l)));
   };
 
-  const addLine = () =>
-    setLines((prev) => [...prev, { productCode: '', quantity: 1 }]);
-
-  const removeLine = (idx: number) =>
-    setLines((prev) => prev.filter((_, i) => i !== idx));
+  const addLine = () => setLines((prev) => [...prev, { productCode: '', quantity: 1 }]);
+  const removeLine = (idx: number) => setLines((prev) => prev.filter((_, i) => i !== idx));
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
@@ -150,11 +145,7 @@ export function CreatePO() {
                 style={{ flex: 1 }}
               />
               {lines.length > 1 && (
-                <button
-                  type="button"
-                  className="btn-danger"
-                  onClick={() => removeLine(idx)}
-                >
+                <button type="button" className="btn-danger" onClick={() => removeLine(idx)}>
                   ✕
                 </button>
               )}

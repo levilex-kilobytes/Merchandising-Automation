@@ -3,14 +3,15 @@ import * as protoLoader from '@grpc/proto-loader';
 import path from 'path';
 import { config } from '../config';
 
-interface POExpectedItem {
+interface PurchaseOrderExpectedItem {
   product_code: string;
   ordered_qty: number;
   received_qty: number;
   unit_cost: number;
 }
 
-interface PO {
+interface PurchaseOrder {
+  supplier_name: string;
   id: string;
   supplier_id: string;
   status: string;
@@ -36,18 +37,18 @@ export class ProcurementClient {
     this.client = new Ctor(config.PROCUREMENT_GRPC_URL, grpc.credentials.createInsecure());
   }
 
-  getPurchaseOrder(id: string): Promise<PO> {
+  getPurchaseOrder(id: string): Promise<PurchaseOrder> {
     return new Promise((resolve, reject) => {
-      this.client.GetPurchaseOrder({ id }, (err: any, response: PO) => {
+      this.client.GetPurchaseOrder({ id }, (err: any, response: PurchaseOrder) => {
         if (err) reject(err);
         else resolve(response);
       });
     });
   }
 
-  getPOExpectedItems(poId: string): Promise<POExpectedItem[]> {
+  getPurchaseOrderExpectedItems(purchaseOrderId: string): Promise<PurchaseOrderExpectedItem[]> {
     return new Promise((resolve, reject) => {
-      this.client.GetPOExpectedItems({ po_id: poId }, (err: any, response: { items: POExpectedItem[] }) => {
+      this.client.GetPurchaseOrderExpectedItems({ po_id: purchaseOrderId }, (err: any, response: { items: PurchaseOrderExpectedItem[] }) => {
         if (err) reject(err);
         else resolve(response.items);
       });

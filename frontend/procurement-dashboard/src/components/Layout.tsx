@@ -9,6 +9,7 @@ export function Layout({ children }: { children: ReactNode }) {
         <nav className="nav">
           <NavLink to="/" end>Purchase Orders</NavLink>
           <NavLink to="/approvals">Approval Queue</NavLink>
+          <NavLink to="/reorder">Reorder</NavLink>
           <NavLink to="/purchase-orders/new">New PO</NavLink>
         </nav>
       </header>

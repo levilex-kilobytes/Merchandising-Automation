@@ -5,13 +5,13 @@ import { receivingApi } from '../api/receiving';
 
 export function ReceiveDelivery() {
   const navigate = useNavigate();
-  const [poId, setPoId] = useState('');
+  const [purchaseOrderId, setPoId] = useState('');
   const [notes, setNotes] = useState('');
 
   const create = useMutation({
-    mutationFn: () => receivingApi.createGRN({ poId, notes: notes || undefined }),
-    onSuccess: (grn) => {
-      navigate(`/grns/${grn.id}`);
+    mutationFn: () => receivingApi.createGoodsReceivedNote({ purchaseOrderId, notes: notes || undefined }),
+    onSuccess: (goodsReceivedNote) => {
+      navigate(`/grns/${goodsReceivedNote.id}`);
     },
   });
 
@@ -35,12 +35,12 @@ export function ReceiveDelivery() {
           <label>Purchase Order ID *</label>
           <input
             required
-            value={poId}
+            value={purchaseOrderId}
             onChange={(e) => setPoId(e.target.value.trim())}
             placeholder="Paste the PO UUID from the procurement dashboard"
           />
           <p style={{ color: 'var(--muted)', marginTop: 8, fontSize: 14 }}>
-            The GRN will be pre-populated with the expected items from the PO.
+            The GoodsReceivedNote will be pre-populated with the expected items from the PO.
           </p>
         </div>
 
@@ -58,7 +58,7 @@ export function ReceiveDelivery() {
           <button type="button" className="btn-secondary" onClick={() => navigate('/')}>
             Cancel
           </button>
-          <button type="submit" className="btn-primary" disabled={create.isPending || !poId}>
+          <button type="submit" className="btn-primary" disabled={create.isPending || !purchaseOrderId}>
             {create.isPending ? 'Creating...' : 'Start Receiving'}
           </button>
         </div>
@@ -68,10 +68,10 @@ export function ReceiveDelivery() {
         <h3 style={{ marginBottom: 16 }}>How it works</h3>
         <ol style={{ paddingLeft: 20, lineHeight: 2 }}>
           <li>Enter the PO ID from the approved purchase order</li>
-          <li>The GRN is created in draft with all expected items</li>
+          <li>The GoodsReceivedNote is created in draft with all expected items</li>
           <li>Walk the dock and record received quantities per line</li>
           <li>Flag any damaged items and add notes</li>
-          <li>Complete the GRN to publish the receiving event</li>
+          <li>Complete the GoodsReceivedNote to publish the receiving event</li>
         </ol>
       </div>
     </>

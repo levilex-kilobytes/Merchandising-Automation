@@ -1,16 +1,16 @@
 import { Routes, Route } from 'react-router-dom';
 import { Layout } from './components/Layout';
-import { GRNList } from './pages/GRNList';
-import { GRNDetail } from './pages/GRNDetail';
+import { GoodsReceivedNoteList } from './pages/GoodsReceivedNoteList';
+import { GoodsReceivedNoteDetail } from './pages/GoodsReceivedNoteDetail';
 import { ReceiveDelivery } from './pages/ReceiveDelivery';
 
 export default function App() {
   return (
     <Layout>
       <Routes>
-        <Route path="/" element={<GRNList />} />
+        <Route path="/" element={<GoodsReceivedNoteList />} />
         <Route path="/receive" element={<ReceiveDelivery />} />
-        <Route path="/grns/:id" element={<GRNDetail />} />
+        <Route path="/grns/:id" element={<GoodsReceivedNoteDetail />} />
       </Routes>
     </Layout>
   );

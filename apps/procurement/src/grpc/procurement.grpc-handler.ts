@@ -13,6 +13,7 @@ export function buildProcurementGrpcHandlers(service: PurchaseOrderService) {
         callback(null, {
           id: po.id,
           supplier_id: po.supplierId,
+          supplier_name: po.supplierName,
           status: po.status,
           currency: po.currency,
           total_cost: po.totalCost,
@@ -23,7 +24,7 @@ export function buildProcurementGrpcHandlers(service: PurchaseOrderService) {
       }
     },
 
-    GetPOExpectedItems: async (call: { request: GetPOItemsRequest }, callback: GrpcCallback): Promise<void> => {
+    GetPurchaseOrderExpectedItems: async (call: { request: GetPOItemsRequest }, callback: GrpcCallback): Promise<void> => {
       try {
         const po = await service.getPurchaseOrder(call.request.po_id);
         callback(null, {

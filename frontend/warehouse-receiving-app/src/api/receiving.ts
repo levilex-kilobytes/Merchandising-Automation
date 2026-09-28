@@ -1,22 +1,31 @@
 import { api } from './client';
-import { GRN, CreateGRNDto, RecordLineDto } from './types';
+import {
+  GoodsReceivedNote,
+  CreateGoodsReceivedNoteDto,
+  RecordGoodsReceivedNoteLineDto,
+} from './types';
 
 export const receivingApi = {
-  listGRNs: (filter?: { status?: string; poId?: string }) => {
+  listGoodsReceivedNotes: (filter?: { status?: string; purchaseOrderId?: string }) => {
     const params = new URLSearchParams();
     if (filter?.status) params.set('status', filter.status);
-    if (filter?.poId) params.set('poId', filter.poId);
+    if (filter?.purchaseOrderId) params.set('poId', filter.purchaseOrderId);
     const qs = params.toString();
-    return api.get<GRN[]>(`/grns${qs ? `?${qs}` : ''}`);
+    return api.get<GoodsReceivedNote[]>(`/grns${qs ? `?${qs}` : ''}`);
   },
 
-  getGRN: (id: string) => api.get<GRN>(`/grns/${id}`),
+  getGoodsReceivedNote: (id: string) =>
+    api.get<GoodsReceivedNote>(`/grns/${id}`),
 
-  createGRN: (input: CreateGRNDto) => api.post<GRN>('/grns', input),
+  createGoodsReceivedNote: (input: CreateGoodsReceivedNoteDto) =>
+    api.post<GoodsReceivedNote>('/grns', input),
 
-  recordLine: (grnId: string, input: RecordLineDto) =>
-    api.post<GRN>(`/grns/${grnId}/lines`, input),
+  recordGoodsReceivedNoteLine: (
+    goodsReceivedNoteId: string,
+    input: RecordGoodsReceivedNoteLineDto,
+  ) =>
+    api.post<GoodsReceivedNote>(`/grns/${goodsReceivedNoteId}/lines`, input),
 
-  completeGRN: (grnId: string) =>
-    api.post<GRN>(`/grns/${grnId}/complete`),
+  completeGoodsReceivedNote: (goodsReceivedNoteId: string) =>
+    api.post<GoodsReceivedNote>(`/grns/${goodsReceivedNoteId}/complete`),
 };

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { grnRouter } from '../modules/grn/grn.routes';
+import { grnRouter } from '../modules/goods-received-note/goods-received-note.routes';
 import { config } from '../config';
 
 export const apiRouter = Router();

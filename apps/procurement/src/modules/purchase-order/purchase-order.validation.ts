@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { CreatePODto, ApprovePODto, CancelPODto, ListPOQueryDto } from './purchase-order.types';
+import { CreatePurchaseOrderDto, ApprovePurchaseOrderDto, CancelPurchaseOrderDto, ListPurchaseOrdersQueryDto } from './purchase-order.types';
 
-export const CreatePOSchema: z.ZodType<CreatePODto> = z.object({
+export const CreatePOSchema: z.ZodType<CreatePurchaseOrderDto> = z.object({
   supplierId: z.string().uuid(),
   currency: z.string().length(3),
   expectedDate: z.string(),
@@ -16,16 +16,16 @@ export const CreatePOSchema: z.ZodType<CreatePODto> = z.object({
     .min(1),
 });
 
-export const ApprovePOSchema: z.ZodType<ApprovePODto> = z.object({
+export const ApprovePOSchema: z.ZodType<ApprovePurchaseOrderDto> = z.object({
   approvedBy: z.string().min(1).max(255),
   note: z.string().optional(),
 });
 
-export const CancelPOSchema: z.ZodType<CancelPODto> = z.object({
+export const CancelPOSchema: z.ZodType<CancelPurchaseOrderDto> = z.object({
   reason: z.string().min(1),
 });
 
-export const ListPOQuerySchema: z.ZodType<ListPOQueryDto> = z.object({
+export const ListPOQuerySchema: z.ZodType<ListPurchaseOrdersQueryDto> = z.object({
   status: z.enum(['draft', 'pending', 'approved', 'sent', 'received', 'closed', 'cancelled']).optional(),
   supplierId: z.string().uuid().optional(),
 });

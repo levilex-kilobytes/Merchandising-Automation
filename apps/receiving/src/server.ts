@@ -11,9 +11,9 @@ import { RabbitMQEventBus } from '@mfa/event-bus';
 import { Logger } from '@mfa/logger';
 import { OutboxRepository } from './shared/outbox.repository';
 import { OutboxPublisher } from './events/publisher';
-import { registerPoApprovedHandler } from './events/handlers/po-approved.handler';
+import { registerPoApprovedHandler } from './events/handlers/purchase-order-approved.handler';
 import { buildReceivingGrpcHandlers } from './grpc/receiving.grpc-handler';
-import { GRNService } from './modules/grn/grn.service';
+import { GoodsReceivedNoteService } from './modules/goods-received-note/goods-received-note.service';
 
 async function main(): Promise<void> {
   const logger = new Logger({
@@ -42,7 +42,7 @@ async function main(): Promise<void> {
 
   await registerPoApprovedHandler(bus, logger);
 
-  const grnService = new GRNService();
+  const grnService = new GoodsReceivedNoteService();
 
   const app = express();
   app.use(cors());

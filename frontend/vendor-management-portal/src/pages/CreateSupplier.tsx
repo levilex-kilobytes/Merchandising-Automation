@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { vendorApi } from '../api/vendor';
 import { CreateSupplierDto, PaymentTerms } from '../api/types';
+import { PhoneInput } from '../components/PhoneInput';
+import { ErrorBanner } from '../components/ErrorBanner';
 
 const initial: CreateSupplierDto = {
   name: '',
@@ -47,11 +49,7 @@ export function CreateSupplier() {
         <h2>New Supplier</h2>
       </div>
 
-      {create.error && (
-        <div className="error-box">
-          {(create.error as Error).message || 'Failed to create supplier'}
-        </div>
-      )}
+      <ErrorBanner error={create.error} />
 
       <form className="card" onSubmit={submit}>
         <div className="field">
@@ -82,7 +80,10 @@ export function CreateSupplier() {
           </div>
           <div className="field">
             <label>Phone</label>
-            <input value={form.phone || ''} onChange={(e) => update('phone', e.target.value)} />
+            <PhoneInput
+              value={form.phone || ''}
+              onChange={(phone) => update('phone', phone)}
+            />
           </div>
         </div>
 

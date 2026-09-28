@@ -22,6 +22,18 @@ interface VendorProduct {
   min_order_qty: number;
 }
 
+export interface SupplierForProduct {
+  id: string;
+  supplierId: string;
+  supplierName: string;
+  productCode: string;
+  productName: string;
+  unitCost: number;
+  currency: string;
+  leadTimeDays: number;
+  minOrderQty: number;
+}
+
 export class VendorClient {
   private client: any;
 
@@ -50,10 +62,36 @@ export class VendorClient {
 
   getSupplierProduct(supplierId: string, productCode: string): Promise<VendorProduct> {
     return new Promise((resolve, reject) => {
-      this.client.GetSupplierProduct({ supplier_id: supplierId, product_code: productCode }, (err: any, response: VendorProduct) => {
-        if (err) reject(err);
-        else resolve(response);
-      });
+      this.client.GetSupplierProduct(
+        { supplier_id: supplierId, product_code: productCode },
+        (err: any, response: VendorProduct) => {
+          if (err) reject(err);
+          else resolve(response);
+        },
+      );
+    });
+  }
+
+  listSuppliersForProduct(productCode: string): Promise<SupplierForProduct[]> {
+    return new Promise((resolve, reject) => {
+      this.client.ListSuppliersForProduct(
+        { product_code: productCode },
+        (err: any, response: { suppliers?: any[] }) => {
+          if (err) return reject(err);
+          const suppliers = (response?.suppliers ?? []).map((s) => ({
+            id: s.id,
+            supplierId: s.supplier_id,
+            supplierName: '', // Vendor's proto doesn't return the name yet; fallback below
+            productCode: s.product_code,
+            productName: s.product_name,
+            unitCost: s.unit_cost,
+            currency: s.currency,
+            leadTimeDays: s.lead_time_days,
+            minOrderQty: s.min_order_qty,
+          }));
+          resolve(suppliers);
+        },
+      );
     });
   }
 }

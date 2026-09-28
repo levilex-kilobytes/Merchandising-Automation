@@ -2,9 +2,17 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
+    "rootDir": "../..",
     "types": ["node", "jest"],
     "noEmit": false
   },
-  "include": ["src/**/*.ts", "scripts/**/*.ts"],
+  "include": [
+    "src/**/*.ts",
+    "scripts/**/*.ts",
+    "../../packages/errors/src/**/*.ts",
+    "../../packages/logger/src/**/*.ts",
+    "../../packages/shared-types/src/**/*.ts",
+    "../../packages/event-bus/src/**/*.ts"
+  ],
   "exclude": ["node_modules", "dist", "tests/**/*.ts"]
 }

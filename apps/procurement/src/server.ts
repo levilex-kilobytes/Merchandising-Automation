@@ -11,9 +11,11 @@ import { RabbitMQEventBus } from '@mfa/event-bus';
 import { Logger } from '@mfa/logger';
 import { OutboxRepository } from './shared/outbox.repository';
 import { OutboxPublisher } from './events/publisher';
-import { registerGrnCompletedHandler } from './events/handlers/grn-completed.handler';
+import { registerGrnCompletedHandler } from './events/handlers/goods-received-note-completed.handler';
+import { registerStockLowHandler } from './events/handlers/stock-low.handler';
 import { buildProcurementGrpcHandlers } from './grpc/procurement.grpc-handler';
 import { PurchaseOrderService } from './modules/purchase-order/purchase-order.service';
+import { ReorderService } from './modules/reorder/reorder.service';
 
 async function main(): Promise<void> {
   const logger = new Logger({
@@ -40,8 +42,11 @@ async function main(): Promise<void> {
   });
   publisher.start();
 
+  const { ReorderSuggestionService } = require('./modules/reorder/reorder.service');
   const poService = new PurchaseOrderService();
   await registerGrnCompletedHandler(bus, logger, poService);
+  const reorderService = new ReorderService();
+  await registerStockLowHandler(bus, logger, reorderService);
 
   const app = express();
   app.use(cors());

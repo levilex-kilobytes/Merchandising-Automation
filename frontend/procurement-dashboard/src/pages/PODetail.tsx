@@ -2,10 +2,12 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { procurementApi } from '../api/procurement';
 import { StatusBadge } from '../components/StatusBadge';
+import { useToast } from '../components/Toast';
 
 export function PODetail() {
   const { id } = useParams<{ id: string }>();
   const qc = useQueryClient();
+  const toast = useToast();
 
   const { data: po, isLoading } = useQuery({
     queryKey: ['purchase-order', id],
@@ -29,17 +31,20 @@ export function PODetail() {
       if (!approvedBy) throw new Error('Cancelled');
       return procurementApi.approvePO(id!, approvedBy, 'Approved via dashboard');
     },
-    onSuccess: invalidate,
+    onSuccess: () => { invalidate(); toast.success('Purchase order approved'); },
+    onError: (err: Error) => toast.error(err.message),
   });
 
   const send = useMutation({
     mutationFn: () => procurementApi.sendPO(id!),
-    onSuccess: invalidate,
+    onSuccess: () => { invalidate(); toast.success('Purchase order sent'); },
+    onError: (err: Error) => toast.error(err.message),
   });
 
   const close = useMutation({
     mutationFn: () => procurementApi.closePO(id!),
-    onSuccess: invalidate,
+    onSuccess: () => { invalidate(); toast.success('Purchase order closed'); },
+    onError: (err: Error) => toast.error(err.message),
   });
 
   const cancel = useMutation({
