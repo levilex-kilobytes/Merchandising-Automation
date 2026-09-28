@@ -1,1 +1,0 @@
-{"root":["./src/App.tsx","./src/main.tsx","./src/api/client.ts","./src/api/procurement.ts","./src/api/types.ts","./src/components/Layout.tsx","./src/components/StatusBadge.tsx","./src/pages/ApprovalQueue.tsx","./src/pages/CreatePO.tsx","./src/pages/PODetail.tsx","./src/pages/POList.tsx"],"version":"5.9.3"}

@@ -53,13 +53,18 @@ export function PODetail() {
 
   if (isLoading || !po) return <div className="loading">Loading...</div>;
 
+  const copyId = () => {
+    navigator.clipboard.writeText(po.id);
+    alert('PO ID copied to clipboard:\n' + po.id);
+  };
+
   return (
     <>
       <div className="page-header">
         <h2>
           <Link to="/" style={{ color: 'var(--muted)', fontSize: 14 }}>← Back</Link>
           <br />
-          PO <code>{po.id.slice(0, 8)}</code>
+          Purchase Order
         </h2>
         <StatusBadge status={po.status} />
       </div>
@@ -69,6 +74,25 @@ export function PODetail() {
           {(submit.error || approve.error || send.error || close.error || cancel.error)?.message}
         </div>
       )}
+
+      <div className="card">
+        <h3 style={{ marginBottom: 12 }}>PO ID</h3>
+        <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+          <code style={{ fontSize: 16, padding: '8px 12px', userSelect: 'all' }}>
+            {po.id}
+          </code>
+          <button
+            className="btn-secondary"
+            style={{ padding: '8px 16px', fontSize: 14 }}
+            onClick={copyId}
+          >
+            Copy ID
+          </button>
+        </div>
+        <p style={{ color: 'var(--muted)', marginTop: 12, fontSize: 13 }}>
+          Use this full UUID when receiving the goods in the Warehouse Receiving App.
+        </p>
+      </div>
 
       <div className="card">
         <h3 style={{ marginBottom: 16 }}>Actions</h3>

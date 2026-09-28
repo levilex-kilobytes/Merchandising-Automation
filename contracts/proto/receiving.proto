@@ -1,0 +1,30 @@
+syntax = "proto3";
+package mfa.receiving.v1;
+
+service ReceivingService {
+  rpc GetGRN (GetGRNRequest) returns (GRNReply);
+  rpc ListGRNsByPO (ListGRNsByPORequest) returns (ListGRNsByPOReply);
+}
+
+message GetGRNRequest {
+  string id = 1;
+}
+
+message GRNReply {
+  string id = 1;
+  string po_id = 2;
+  string supplier_id = 3;
+  string status = 4;
+  string received_at = 5;
+  int32 shortages = 6;
+  int32 overages = 7;
+  int32 damages = 8;
+}
+
+message ListGRNsByPORequest {
+  string po_id = 1;
+}
+
+message ListGRNsByPOReply {
+  repeated GRNReply grns = 1;
+}

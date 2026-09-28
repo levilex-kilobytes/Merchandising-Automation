@@ -48,10 +48,11 @@ export class PurchaseOrderRepository {
     return toPOLine(rows[0]);
   }
 
-  async findById(id: string): Promise<PurchaseOrder | null> {
-    const { rows } = await pool.query<PORow>(`SELECT * FROM purchase_orders WHERE id = $1`, [id]);
+  async findById(id: string, tx?: PoolClient): Promise<PurchaseOrder | null> {
+    const client = tx ?? pool;
+    const { rows } = await client.query<PORow>(`SELECT * FROM purchase_orders WHERE id = $1`, [id]);
     if (!rows[0]) return null;
-    const { rows: lines } = await pool.query<POLineRow>(
+    const { rows: lines } = await client.query<POLineRow>(
       `SELECT * FROM po_lines WHERE po_id = $1 ORDER BY created_at ASC`,
       [id],
     );
