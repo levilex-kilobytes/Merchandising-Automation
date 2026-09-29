@@ -31,7 +31,11 @@
     "dev:warehouse": "npm --workspace=@mfa/warehouse-operations run dev",
     "migrate:warehouse": "npm --workspace=@mfa/warehouse-operations run migrate",
     "dev:warehouse-floor": "npm --workspace=@mfa/warehouse-floor-app run dev",
-    "build:warehouse-floor": "npm --workspace=@mfa/warehouse-floor-app run build"
+    "build:warehouse-floor": "npm --workspace=@mfa/warehouse-floor-app run build",
+    "dev:pos-terminal": "npm --workspace=@mfa/pos-terminal-app run dev",
+    "build:pos-terminal": "npm --workspace=@mfa/pos-terminal-app run build",
+    "dev:retail-sales": "npm --workspace=@mfa/retail-sales run dev",
+    "migrate:retail-sales": "npm --workspace=@mfa/retail-sales run migrate"
   },
   "dependencies": {
     "amqplib": "^0.10.4",

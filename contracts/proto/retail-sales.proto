@@ -1,0 +1,43 @@
+syntax = "proto3";
+package mfa.retail.v1;
+
+service RetailSalesService {
+  rpc GetSale (GetSaleRequest) returns (SaleReply);
+  rpc GetReturn (GetReturnRequest) returns (ReturnReply);
+  rpc ValidateStock (ValidateStockRequest) returns (ValidateStockReply);
+}
+
+message GetSaleRequest { string id = 1; }
+message GetReturnRequest { string id = 1; }
+message ValidateStockRequest {
+  string store_location = 1;
+  repeated StockLine lines = 2;
+}
+message StockLine {
+  string product_code = 1;
+  int32 quantity = 2;
+}
+message ValidateStockReply {
+  bool all_available = 1;
+  repeated StockLineResult results = 2;
+}
+message StockLineResult {
+  string product_code = 1;
+  bool available = 2;
+  int32 requested = 3;
+  int32 on_hand = 4;
+}
+message SaleReply {
+  string id = 1;
+  string sale_number = 2;
+  string store_location = 3;
+  string status = 4;
+  double grand_total = 5;
+}
+message ReturnReply {
+  string id = 1;
+  string return_number = 2;
+  string original_sale_id = 3;
+  string status = 4;
+  double refund_total = 5;
+}
