@@ -8,6 +8,7 @@ import { EmptyState } from '../components/EmptyState';
 import { TableSkeleton } from '../components/Skeleton';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { useToast } from '../components/ToastProvider';
+import { formatDateTime, formatDate } from '../utils/format';
 
 export function TransferList() {
   const [status, setStatus] = useState('');
@@ -100,7 +101,7 @@ export function TransferList() {
                   </span>
                 </td>
                 <td data-label="Status"><StatusBadge status={t.status} /></td>
-                <td data-label="Created">{new Date(t.createdAt).toLocaleString()}</td>
+                <td data-label="Created">{formatDateTime(t.createdAt)}</td>
                 <td data-label="">
                   {t.status === 'draft' && (
                     <button className="btn-primary btn-sm" onClick={() => setConfirmAction({ id: t.id, kind: 'dispatch' })}>

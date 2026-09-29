@@ -35,7 +35,19 @@
     "dev:pos-terminal": "npm --workspace=@mfa/pos-terminal-app run dev",
     "build:pos-terminal": "npm --workspace=@mfa/pos-terminal-app run build",
     "dev:retail-sales": "npm --workspace=@mfa/retail-sales run dev",
-    "migrate:retail-sales": "npm --workspace=@mfa/retail-sales run migrate"
+    "migrate:retail-sales": "npm --workspace=@mfa/retail-sales run migrate",
+    "dev:sales-audit": "npm --workspace=@mfa/sales-audit run dev",
+    "migrate:sales-audit": "npm --workspace=@mfa/sales-audit run migrate",
+    "dev:store-manager": "npm --workspace=@mfa/store-manager-dashboard run dev",
+    "build:store-manager": "npm --workspace=@mfa/store-manager-dashboard run build",
+    "dev:financials": "npm --workspace=@mfa/financials run dev",
+    "migrate:financials": "npm --workspace=@mfa/financials run migrate",
+    "dev:finance-portal": "npm --workspace=@mfa/finance-portal run dev",
+    "build:finance-portal": "npm --workspace=@mfa/finance-portal run build",
+    "dev:receiving-app": "npm --workspace=@mfa/warehouse-receiving-app run dev",
+    "dev:backends": "concurrently -k -n vendor,proc,rec,inv,wh,pos,audit,fin -c blue,magenta,green,cyan,white,yellow,red,gray \"npm run dev:vendor\" \"npm run dev:procurement\" \"npm run dev:receiving\" \"npm run dev:inventory\" \"npm run dev:warehouse\" \"npm run dev:retail-sales\" \"npm run dev:sales-audit\" \"npm run dev:financials\"",
+    "dev:frontends": "concurrently -k -n vw,pw,rw,iw,ww,po,aw,fw -c blue,magenta,green,cyan,white,yellow,red,gray \"npm run dev:vendor-portal\" \"npm run dev:procurement-dashboard\" \"npm run dev:receiving-app\" \"npm run dev:inventory-ui\" \"npm run dev:warehouse-floor\" \"npm run dev:pos-terminal\" \"npm run dev:store-manager\" \"npm run dev:finance-portal\"",
+    "dev:hub": "python3 -m http.server 5170"
   },
   "dependencies": {
     "amqplib": "^0.10.4",
@@ -55,6 +67,7 @@
     "@types/pg": "^8.11.10",
     "@types/supertest": "^6.0.2",
     "@types/uuid": "^10.0.0",
+    "concurrently": "^10.0.5",
     "jest": "^29.7.0",
     "supertest": "^7.0.0",
     "ts-jest": "^29.2.5",

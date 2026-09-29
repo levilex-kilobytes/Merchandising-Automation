@@ -1,12 +1,13 @@
-import { ReactNode } from 'react';
-import { NavLink } from 'react-router-dom';
-import { ShoppingCart, Receipt, RotateCcw, Tag } from 'lucide-react';
+import { ReactNode } from "react";
+import { NavLink } from "react-router-dom";
+import { ShoppingCart, Receipt, RotateCcw, Tag, BarChart3 } from "lucide-react";
 
 const NAV = [
-  { to: '/', label: 'Terminal', icon: ShoppingCart },
-  { to: '/sales', label: 'Sales', icon: Receipt },
-  { to: '/returns', label: 'Returns', icon: RotateCcw },
-  { to: '/prices', label: 'Prices', icon: Tag },
+  { to: "/", label: "Terminal", icon: ShoppingCart },
+  { to: "/sales", label: "Sales", icon: Receipt },
+  { to: "/returns", label: "Returns", icon: RotateCcw },
+  { to: "/prices", label: "Prices", icon: Tag },
+  { to: "/analytics", label: "Analytics", icon: BarChart3 },
 ];
 
 export function Layout({ children }: { children: ReactNode }) {
@@ -22,7 +23,12 @@ export function Layout({ children }: { children: ReactNode }) {
         </div>
         <nav className="nav" aria-label="Primary">
           {NAV.map(({ to, label, icon: Icon }) => (
-            <NavLink key={to} to={to} end={to === '/'} className={({ isActive }) => isActive ? 'active' : ''}>
+            <NavLink
+              key={to}
+              to={to}
+              end={to === "/"}
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
               <Icon size={18} />
               <span>{label}</span>
             </NavLink>

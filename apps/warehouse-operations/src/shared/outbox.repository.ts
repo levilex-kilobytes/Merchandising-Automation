@@ -19,7 +19,12 @@ export class OutboxRepository {
 
   async fetchUnpublished(limit: number): Promise<OutboxRow[]> {
     const { rows } = await pool.query<OutboxRow>(
-      `SELECT id, event_type, aggregate_id, payload, created_at FROM outbox WHERE published_at IS NULL ORDER BY created_at ASC LIMIT $1`,
+      `SELECT id, event_type, aggregate_id, payload, created_at
+         FROM outbox
+         WHERE published_at IS NULL
+         ORDER BY created_at ASC
+         LIMIT $1
+         FOR UPDATE SKIP LOCKED`,
       [limit],
     );
     return rows;

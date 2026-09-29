@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { ClipboardCheck, AlertTriangle, CheckCircle2, Clock, Plus, ArrowRight } from 'lucide-react';
 import { auditApi } from '../api/audit';
 import { useToast } from '../components/ToastProvider';
 import { StatCard } from '../components/StatCard';
+import { formatISODate } from '../utils/format';
 
 const fmt = (n: number) => `KES ${n.toFixed(2)}`;
 
@@ -14,6 +15,7 @@ export function SessionsList() {
   const [registerCode, setRegisterCode] = useState('');
   const [businessDate, setBusinessDate] = useState(new Date().toISOString().slice(0, 10));
   const { push } = useToast();
+  const navigate = useNavigate();
   const qc = useQueryClient();
 
   const { data: sessions, isLoading, error } = useQuery({
@@ -113,7 +115,7 @@ export function SessionsList() {
           <tbody>
             {sessions.map((s) => (
               <tr key={s.id}>
-                <td>{s.businessDate}</td>
+                <td style={{ whiteSpace: 'nowrap' }}>{formatISODate(s.businessDate)}</td>
                 <td><span className="mono">{s.registerCode}</span></td>
                 <td>{s.storeLocation}</td>
                 <td><span className="session-total">{fmt(s.expectedTotal)}</span></td>
@@ -126,9 +128,13 @@ export function SessionsList() {
                 <td><span className={`badge badge-${s.status}`}>{s.status}</span></td>
                 <td>
                   {s.status !== 'closed' && (
-                    <Link to={`/reconcile/${s.id}`} className="btn-primary btn-sm">
+                    <button
+                      type="button"
+                      className="btn-primary btn-sm"
+                      onClick={() => { console.log('RECONCILE CLICK', s.id); navigate(`/reconcile/${s.id}`); }}
+                    >
                       {s.status === 'open' ? 'Reconcile' : 'Close'} <ArrowRight size={14} />
-                    </Link>
+                    </button>
                   )}
                 </td>
               </tr>

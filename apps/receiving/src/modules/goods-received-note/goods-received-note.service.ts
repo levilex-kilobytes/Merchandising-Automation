@@ -95,6 +95,7 @@ export class GoodsReceivedNoteService {
           goodsReceivedNoteId,
           purchaseOrderId: grn.purchaseOrderId,
           supplierId: grn.supplierId,
+          supplierName: grn.supplierName,
           grnDate: new Date().toISOString(),
           shortages: grn.shortages,
           damages: grn.damages,

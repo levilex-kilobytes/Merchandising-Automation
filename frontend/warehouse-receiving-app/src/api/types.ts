@@ -1,12 +1,26 @@
-export type GoodsReceivedNoteStatus = 'draft' | 'completed';
-export type ItemCondition = 'good' | 'damaged';
+export type GRNStatus = 'draft' | 'completed';
+export type LineCondition = 'good' | 'damaged' | 'quarantined';
+
+export interface GRNLine {
+  id: string;
+  goodsReceivedNoteId: string;
+  productCode: string;
+  productName: string;
+  orderedQty: number;
+  receivedQty: number;
+  damagedQty: number;
+  condition: LineCondition;
+  unitCost: number;
+  lineTotal: number;
+  notes: string | null;
+}
 
 export interface GoodsReceivedNote {
   id: string;
   purchaseOrderId: string;
   supplierId: string;
   supplierName: string;
-  status: GoodsReceivedNoteStatus;
+  status: GRNStatus;
   receivedAt: string | null;
   shortages: number;
   overages: number;
@@ -15,34 +29,13 @@ export interface GoodsReceivedNote {
   completedAt: string | null;
   createdAt: string;
   updatedAt: string;
-  lines?: GoodsReceivedNoteLine[];
+  lines?: GRNLine[];
 }
 
-export interface GoodsReceivedNoteLine {
-  id: string;
-  goodsReceivedNoteId: string;
+export interface RecordLineDto {
   productCode: string;
-  productName: string;
-  orderedQty: number;
   receivedQty: number;
   damagedQty: number;
-  condition: ItemCondition;
-  unitCost: number;
-  lineTotal: number;
-  notes: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface CreateGoodsReceivedNoteDto {
-  purchaseOrderId: string;
-  notes?: string;
-}
-
-export interface RecordGoodsReceivedNoteLineDto {
-  productCode: string;
-  receivedQty: number;
-  condition: ItemCondition;
-  damagedQty?: number;
+  condition: LineCondition;
   notes?: string;
 }

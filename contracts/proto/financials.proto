@@ -1,0 +1,23 @@
+syntax = "proto3";
+package mfa.finance.v1;
+
+service FinancialsService {
+  rpc GetAccountBalance (GetAccountBalanceRequest) returns (AccountBalanceReply);
+  rpc GetTrialBalance (GetTrialBalanceRequest) returns (TrialBalanceReply);
+}
+
+message GetAccountBalanceRequest { string account_code = 1; }
+message AccountBalanceReply {
+  string account_code = 1;
+  string account_name = 2;
+  string account_type = 3;
+  double debit_total = 4;
+  double credit_total = 5;
+  double balance = 6;
+}
+message GetTrialBalanceRequest {}
+message TrialBalanceReply {
+  repeated AccountBalanceReply accounts = 1;
+  double total_debits = 2;
+  double total_credits = 3;
+}

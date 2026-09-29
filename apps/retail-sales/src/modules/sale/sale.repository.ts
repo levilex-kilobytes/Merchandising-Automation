@@ -36,11 +36,18 @@ export class SaleRepository {
     );
   }
 
-  async findById(id: string): Promise<Sale | null> {
-    const { rows } = await pool.query<SaleRow>(`SELECT * FROM sales WHERE id = $1`, [id]);
+  async findById(id: string, tx?: PoolClient): Promise<Sale | null> {
+    const client = tx ?? pool;
+    const { rows } = await client.query<SaleRow>(`SELECT * FROM sales WHERE id = $1`, [id]);
     if (!rows[0]) return null;
-    const { rows: lines } = await pool.query<SaleLineRow>(`SELECT * FROM sale_lines WHERE sale_id = $1 ORDER BY created_at`, [id]);
-    const { rows: payments } = await pool.query<PaymentRow>(`SELECT * FROM payments WHERE sale_id = $1 ORDER BY created_at`, [id]);
+    const { rows: lines } = await client.query<SaleLineRow>(
+      `SELECT * FROM sale_lines WHERE sale_id = $1 ORDER BY created_at`,
+      [id],
+    );
+    const { rows: payments } = await client.query<PaymentRow>(
+      `SELECT * FROM payments WHERE sale_id = $1 ORDER BY created_at`,
+      [id],
+    );
     return toSale(rows[0], lines, payments);
   }
 

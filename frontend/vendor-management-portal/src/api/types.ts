@@ -1,7 +1,7 @@
 export type SupplierStatus = 'active' | 'inactive' | 'blacklisted';
 export type PaymentTerms = 'COD' | 'NET_15' | 'NET_30' | 'NET_60' | 'NET_90';
 
-export interface Supplier {
+export interface Vendor {
   id: string;
   name: string;
   legalName: string | null;
@@ -20,7 +20,7 @@ export interface Supplier {
   updatedAt: string;
 }
 
-export interface SupplierProduct {
+export interface VendorProduct {
   id: string;
   supplierId: string;
   productCode: string;
@@ -30,22 +30,36 @@ export interface SupplierProduct {
   leadTimeDays: number;
   minOrderQty: number;
   isActive: boolean;
-  validFrom: string;
-  validTo: string | null;
+  effectiveFrom: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface PriceHistory {
+export interface VendorHistoryEvent {
   id: string;
-  supplierId: string;
-  productCode: string;
-  oldCost: number | null;
-  newCost: number;
-  currency: string;
-  effectiveFrom: string;
-  changedAt: string;
+  vendorId: string;
+  eventType: string;
+  description: string;
+  metadata: Record<string, unknown> | null;
+  occurredAt: string;
 }
 
-export interface CreateSupplierDto {
+export interface CreateSupplierProductDto {
+  productCode: string;
+  productName: string;
+  unitCost: number;
+  currency: string;
+  leadTimeDays: number;
+  minOrderQty: number;
+}
+
+export interface ChangePriceDto {
+  newCost: number;
+  currency?: string;
+  effectiveFrom?: string;
+}
+
+export interface CreateVendorDto {
   name: string;
   legalName?: string;
   taxId?: string;
@@ -60,26 +74,6 @@ export interface CreateSupplierDto {
   notes?: string;
 }
 
-export interface CreateSupplierProductDto {
-  productCode: string;
-  productName: string;
-  unitCost: number;
-  currency: string;
-  leadTimeDays: number;
-  minOrderQty: number;
-}
-
-export interface UpdateSupplierProductDto {
-  productName?: string;
-  unitCost?: number;
-  currency?: string;
-  leadTimeDays?: number;
-  minOrderQty?: number;
-  isActive?: boolean;
-}
-
-export interface ChangePriceDto {
-  newCost: number;
-  currency?: string;
-  effectiveFrom?: string;
+export interface UpdateVendorDto extends Partial<CreateVendorDto> {
+  status?: SupplierStatus;
 }

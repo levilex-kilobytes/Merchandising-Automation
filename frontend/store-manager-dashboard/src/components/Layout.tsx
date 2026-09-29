@@ -1,17 +1,22 @@
 import { ReactNode } from "react";
 import { NavLink } from "react-router-dom";
 import {
-  ClipboardCheck,
   LayoutDashboard,
+  ClipboardCheck,
   AlertTriangle,
   TrendingUp,
 } from "lucide-react";
 
 const NAV = [
-  { to: "/", label: "Sessions", icon: LayoutDashboard },
-  { to: "/reconcile", label: "Reconcile", icon: ClipboardCheck },
-  { to: "/discrepancies", label: "Discrepancies", icon: AlertTriangle },
-  { to: "/analytics", label: "Analytics", icon: TrendingUp },
+  { to: "/", label: "Sessions", icon: LayoutDashboard, end: true },
+  { to: "/reconcile", label: "Reconcile", icon: ClipboardCheck, end: false },
+  {
+    to: "/discrepancies",
+    label: "Discrepancies",
+    icon: AlertTriangle,
+    end: false,
+  },
+  { to: "/analytics", label: "Analytics", icon: TrendingUp, end: false },
 ];
 
 export function Layout({ children }: { children: ReactNode }) {
@@ -26,11 +31,11 @@ export function Layout({ children }: { children: ReactNode }) {
           </div>
         </div>
         <nav className="nav" aria-label="Primary">
-          {NAV.map(({ to, label, icon: Icon }) => (
+          {NAV.map(({ to, label, icon: Icon, end }) => (
             <NavLink
               key={to}
               to={to}
-              end={to === "/"}
+              end={end}
               className={({ isActive }) => (isActive ? "active" : "")}
             >
               <Icon size={18} />

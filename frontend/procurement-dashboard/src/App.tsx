@@ -1,20 +1,15 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from './components/Layout';
-import { POList } from './pages/POList';
-import { PODetail } from './pages/PODetail';
-import { CreatePO } from './pages/CreatePO';
-import { ApprovalQueue } from './pages/ApprovalQueue';
-import { ReorderSuggestions } from './pages/ReorderSuggestions';
+import { PurchaseOrders } from './pages/PurchaseOrders';
+import { Analytics } from './pages/Analytics';
 
 export default function App() {
   return (
     <Layout>
       <Routes>
-        <Route path="/" element={<POList />} />
-        <Route path="/purchase-orders/new" element={<CreatePO />} />
-        <Route path="/purchase-orders/:id" element={<PODetail />} />
-        <Route path="/approvals" element={<ApprovalQueue />} />
-        <Route path="/reorder" element={<ReorderSuggestions />} />
+        <Route path="/" element={<PurchaseOrders />} />
+        <Route path="/analytics" element={<Analytics />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Layout>
   );

@@ -4,6 +4,7 @@ import { ScanLine, Trash2, Plus, Minus, CreditCard, Banknote, Gift, Check, X } f
 import { retailApi } from '../api/retail';
 import { PaymentMethod, RetailPrice, Sale } from '../api/types';
 import { useToast } from '../components/ToastProvider';
+import { formatDateTime, formatDate } from '../utils/format';
 
 interface CartLine {
   productCode: string;
@@ -102,6 +103,12 @@ export function Terminal() {
       payments: [{ method: paymentMethod, amount: grandTotal }],
     }),
     onSuccess: (sale) => {
+      if (!sale || typeof sale !== 'object' || !sale.saleNumber) {
+        push('Sale completed but the server returned an invalid response', 'error');
+        setCart([]);
+        setShowPay(false);
+        return;
+      }
       push(`Sale ${sale.saleNumber} completed`, 'success');
       setCompleted(sale);
       setCart([]);
@@ -242,14 +249,25 @@ export function Terminal() {
   );
 }
 
-function Receipt({ sale, onNext }: { sale: Sale; onNext: () => void }) {
+function Receipt({ sale, onNext }: { sale: Sale | null; onNext: () => void }) {
+  if (!sale || !sale.saleNumber) {
+    return (
+      <div style={{ maxWidth: 480, margin: '60px auto', textAlign: 'center' }}>
+        <h3 style={{ marginBottom: 8 }}>Sale completed</h3>
+        <p style={{ color: 'var(--muted)', marginBottom: 20 }}>
+          The server didn't return sale details, but the payment was recorded.
+        </p>
+        <button className="btn-primary btn-lg" onClick={onNext}>Start next sale</button>
+      </div>
+    );
+  }
   return (
     <div>
       <div className="receipt">
         <div className="receipt-header">
           <h3>POS Terminal</h3>
           <div>{sale.storeLocation}</div>
-          <div style={{ fontSize: 12, marginTop: 4 }}>{new Date(sale.completedAt ?? sale.createdAt).toLocaleString()}</div>
+          <div style={{ fontSize: 12, marginTop: 4 }}>{formatDateTime(sale.completedAt ?? sale.createdAt)}</div>
         </div>
         <div style={{ fontSize: 12, marginBottom: 12 }}>Sale #{sale.saleNumber}</div>
         {sale.lines?.map((l) => (

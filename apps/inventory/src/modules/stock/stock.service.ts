@@ -31,6 +31,79 @@ export class StockService {
     });
   }
 
+  async moveStock(input: {
+    productCode: string;
+    fromLocation: string;
+    toLocation: string;
+    quantity: number;
+    referenceId?: string;
+  }): Promise<void> {
+    if (input.quantity <= 0) throw new ConflictError('Quantity must be greater than zero');
+    if (input.fromLocation === input.toLocation) return;
+
+    return this.repo.withTransaction(async (tx) => {
+      const source = await this.repo.findByProductAndLocation(input.productCode, input.fromLocation, tx);
+      if (!source) {
+        throw new NotFoundError(`No stock for ${input.productCode} at ${input.fromLocation}`);
+      }
+      if (source.onHand < input.quantity) {
+        throw new ConflictError(`Only ${source.onHand} units at ${input.fromLocation}, cannot move ${input.quantity}`);
+      }
+
+      await this.repo.incrementOnHand(tx, source.id, -input.quantity);
+      await this.repo.recordMovement(tx, {
+        productCode: input.productCode,
+        locationCode: input.fromLocation,
+        movementType: 'transferred',
+        quantity: -input.quantity,
+        referenceId: input.referenceId,
+        referenceType: 'transfer',
+      });
+
+      const dest = await this.repo.upsertStockItem(tx, {
+        productCode: input.productCode,
+        productName: source.productName,
+        locationCode: input.toLocation,
+        unitCost: source.unitCost,
+        lowStockThreshold: source.lowStockThreshold,
+      });
+      const updated = await this.repo.incrementOnHand(tx, dest.id, input.quantity);
+      await this.repo.recordMovement(tx, {
+        productCode: input.productCode,
+        locationCode: input.toLocation,
+        movementType: 'transferred',
+        quantity: input.quantity,
+        referenceId: input.referenceId,
+        referenceType: 'transfer',
+      });
+
+      await this.outbox.enqueue(tx, {
+        eventType: 'inventory.stock.moved',
+        aggregateId: dest.id,
+        payload: {
+          productCode: input.productCode,
+          fromLocation: input.fromLocation,
+          toLocation: input.toLocation,
+          quantity: input.quantity,
+          referenceId: input.referenceId ?? null,
+        },
+      });
+
+      if (updated.available <= updated.lowStockThreshold) {
+        await this.outbox.enqueue(tx, {
+          eventType: 'inventory.stock.low',
+          aggregateId: dest.id,
+          payload: {
+            productCode: updated.productCode,
+            locationCode: updated.locationCode,
+            available: updated.available,
+            threshold: updated.lowStockThreshold,
+          },
+        });
+      }
+    });
+  }
+
   async adjustStock(input: AdjustmentDto): Promise<StockItem> {
     return this.repo.withTransaction(async (tx) => {
       const item = await this.repo.findByProductAndLocation(

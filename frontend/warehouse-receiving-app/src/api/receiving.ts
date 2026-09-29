@@ -1,31 +1,32 @@
 import { api } from './client';
-import {
-  GoodsReceivedNote,
-  CreateGoodsReceivedNoteDto,
-  RecordGoodsReceivedNoteLineDto,
-} from './types';
+import { GoodsReceivedNote, RecordLineDto } from './types';
+
+function buildQuery(params: Record<string, string | undefined>): string {
+  const parts: string[] = [];
+  for (const [k, v] of Object.entries(params)) {
+    if (v === undefined || v === null) continue;
+    const trimmed = String(v).trim();
+    if (trimmed === '') continue;
+    parts.push(`${encodeURIComponent(k)}=${encodeURIComponent(trimmed)}`);
+  }
+  return parts.length ? `?${parts.join('&')}` : '';
+}
 
 export const receivingApi = {
-  listGoodsReceivedNotes: (filter?: { status?: string; purchaseOrderId?: string }) => {
-    const params = new URLSearchParams();
-    if (filter?.status) params.set('status', filter.status);
-    if (filter?.purchaseOrderId) params.set('poId', filter.purchaseOrderId);
-    const qs = params.toString();
-    return api.get<GoodsReceivedNote[]>(`/grns${qs ? `?${qs}` : ''}`);
-  },
+  list: (filters?: { status?: string; purchaseOrderId?: string }) =>
+    api.get<GoodsReceivedNote[]>(`/grns${buildQuery({
+      status: filters?.status,
+      purchaseOrderId: filters?.purchaseOrderId,
+    })}`),
 
-  getGoodsReceivedNote: (id: string) =>
-    api.get<GoodsReceivedNote>(`/grns/${id}`),
+  get: (id: string) => api.get<GoodsReceivedNote>(`/grns/${id}`),
 
-  createGoodsReceivedNote: (input: CreateGoodsReceivedNoteDto) =>
-    api.post<GoodsReceivedNote>('/grns', input),
+  createFromPO: (purchaseOrderId: string, notes?: string) =>
+    api.post<GoodsReceivedNote>('/grns', { purchaseOrderId, notes }),
 
-  recordGoodsReceivedNoteLine: (
-    goodsReceivedNoteId: string,
-    input: RecordGoodsReceivedNoteLineDto,
-  ) =>
-    api.post<GoodsReceivedNote>(`/grns/${goodsReceivedNoteId}/lines`, input),
+  recordLine: (grnId: string, input: RecordLineDto) =>
+    api.post<GoodsReceivedNote>(`/grns/${grnId}/lines`, input),
 
-  completeGoodsReceivedNote: (goodsReceivedNoteId: string) =>
-    api.post<GoodsReceivedNote>(`/grns/${goodsReceivedNoteId}/complete`),
+  complete: (grnId: string) =>
+    api.post<GoodsReceivedNote>(`/grns/${grnId}/complete`),
 };

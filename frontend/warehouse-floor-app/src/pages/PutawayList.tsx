@@ -1,103 +1,125 @@
 import { useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { Boxes, CheckCircle2, ClipboardList, ArrowRight, PackageOpen } from 'lucide-react';
+import { Package, CheckCircle2, Clock, ArrowRight, PackageOpen } from 'lucide-react';
 import { warehouseApi } from '../api/warehouse';
-import { StatusBadge } from '../components/Badge';
-import { EmptyState } from '../components/EmptyState';
-import { TableSkeleton } from '../components/Skeleton';
 import { StatCard } from '../components/StatCard';
-import { TaskStatus } from '../api/types';
+import { formatDateTime, formatDate } from '../utils/format';
+
+type Tab = 'pending' | 'completed' | 'all';
 
 export function PutawayList() {
-  const [status, setStatus] = useState<TaskStatus | ''>('pending');
+  const [tab, setTab] = useState<Tab>('pending');
 
-  const { data: tasks, isLoading, error } = useQuery({
-    queryKey: ['putaway-tasks', { status }],
-    queryFn: () => warehouseApi.listPutawayTasks(status || undefined),
+  const { data: allTasks, isLoading, error } = useQuery({
+    queryKey: ['putaway-tasks'],
+    queryFn: () => warehouseApi.listPutawayTasks(),
   });
 
-  const stats = useMemo(() => {
-    if (!tasks) return { pending: 0, completed: 0, total: 0 };
-    const pending = tasks.filter((t) => t.status === 'pending').length;
-    const completed = tasks.filter((t) => t.status === 'completed').length;
-    return { pending, completed, total: tasks.length };
-  }, [tasks]);
+  const tasks = allTasks ?? [];
+
+  const counts = useMemo(() => ({
+    pending: tasks.filter((t) => t.status === 'pending').length,
+    completed: tasks.filter((t) => t.status === 'completed').length,
+    total: tasks.length,
+  }), [tasks]);
+
+  const visible = useMemo(() => {
+    if (tab === 'all') return tasks;
+    return tasks.filter((t) => t.status === tab);
+  }, [tasks, tab]);
 
   return (
     <>
       <div className="page-header">
         <div>
           <h2>Putaway Tasks</h2>
-          <p>Store received goods into their assigned bins.</p>
+          <p>Direct received goods to their assigned bins.</p>
         </div>
       </div>
 
       <div className="summary">
-        <StatCard icon={<ClipboardList size={22} />} label="Pending" value={stats.pending} tone="warning" />
-        <StatCard icon={<CheckCircle2 size={22} />} label="Completed" value={stats.completed} tone="success" />
-        <StatCard icon={<Boxes size={22} />} label="Total" value={stats.total} tone="primary" />
+        <StatCard icon={<Clock size={22} />} label="Pending" value={counts.pending} tone="warning" />
+        <StatCard icon={<CheckCircle2 size={22} />} label="Completed" value={counts.completed} tone="success" />
+        <StatCard icon={<Package size={22} />} label="Total" value={counts.total} tone="primary" />
       </div>
 
       <div className="filters">
-        {(['pending', 'completed', ''] as const).map((s) => (
+        {(['pending', 'completed', 'all'] as Tab[]).map((t) => (
           <button
-            key={s || 'all'}
-            className={`chip ${status === s ? 'active' : ''}`}
-            onClick={() => setStatus(s)}
+            key={t}
+            className={`chip ${tab === t ? 'active' : ''}`}
+            onClick={() => setTab(t)}
           >
-            {s === '' ? 'All' : s === 'pending' ? 'Pending' : 'Completed'}
+            {t === 'pending' ? 'Pending' : t === 'completed' ? 'Completed' : 'All'}
+            <span style={{ marginLeft: 6, opacity: 0.7 }}>
+              {t === 'pending' ? counts.pending : t === 'completed' ? counts.completed : counts.total}
+            </span>
           </button>
         ))}
       </div>
 
-      {isLoading && <TableSkeleton rows={4} />}
-      {error && <div className="error-box">Failed to load putaway tasks.</div>}
-
-      {tasks && tasks.length === 0 && (
-        <EmptyState
-          icon={<PackageOpen size={30} />}
-          title="No putaway tasks"
-          hint="Tasks appear automatically when Receiving completes a Goods Received Note."
-        />
+      {isLoading && <div className="skeleton skeleton-row" />}
+      {error && (
+        <div className="error-box">
+          Failed to load putaway tasks: {error instanceof Error ? error.message : 'unknown'}
+        </div>
       )}
 
-      {tasks && tasks.length > 0 && (
-        <table className="responsive-table">
+      {!isLoading && visible.length === 0 && (
+        <div className="empty">
+          <div className="empty-icon"><PackageOpen size={30} /></div>
+          <div className="empty-title">
+            {tab === 'completed' ? 'No completed tasks yet' : tab === 'pending' ? 'No pending tasks' : 'No tasks'}
+          </div>
+          <div className="empty-hint">
+            {tab === 'pending'
+              ? 'New tasks appear when Receiving completes a GRN.'
+              : tab === 'completed'
+                ? 'Completed tasks will show here.'
+                : 'Tasks will appear here.'}
+          </div>
+        </div>
+      )}
+
+      {visible.length > 0 && (
+        <table>
           <thead>
             <tr>
               <th>Product</th>
-              <th>Quantity</th>
+              <th className="num">Qty</th>
               <th>Assigned Bin</th>
               <th>Status</th>
+              <th>Completed</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
-            {tasks.map((task) => (
+            {visible.map((task) => (
               <tr key={task.id}>
-                <td data-label="Product">
+                <td>
                   <div className="cell-product">
                     <strong>{task.productName}</strong>
                     <code>{task.productCode}</code>
                   </div>
                 </td>
-                <td data-label="Quantity">
-                  <span className="cell-qty">{task.quantity}</span>
+                <td className="num"><span className="cell-qty">{task.quantity}</span></td>
+                <td><span className="cell-bin"><code>{task.assignedBin}</code></span></td>
+                <td>
+                  <span className={`badge badge-${task.status === 'completed' ? 'completed' : 'pending'}`}>
+                    {task.status === 'completed' ? 'Completed' : 'Pending'}
+                  </span>
                 </td>
-                <td data-label="Bin">
-                  <span className="cell-bin"><code>{task.assignedBin}</code></span>
+                <td style={{ fontSize: 13, color: 'var(--muted)', whiteSpace: 'nowrap' }}>
+                  {task.completedAt ? formatDateTime(task.completedAt) : '—'}
                 </td>
-                <td data-label="Status"><StatusBadge status={task.status} /></td>
-                <td data-label="">
+                <td>
                   {task.status === 'pending' ? (
                     <Link to={`/putaway/${task.id}`} className="btn-primary btn-sm">
                       Start <ArrowRight size={14} />
                     </Link>
                   ) : (
-                    <span style={{ color: 'var(--muted)', fontSize: 13 }}>
-                      {task.completedAt ? new Date(task.completedAt).toLocaleString() : '—'}
-                    </span>
+                    <span style={{ fontSize: 13, color: 'var(--success)', fontWeight: 600 }}>✓ Done</span>
                   )}
                 </td>
               </tr>

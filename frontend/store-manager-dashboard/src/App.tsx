@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import { SessionsList } from './pages/SessionsList';
+import { ReconcileQueue } from './pages/ReconcileQueue';
 import { ReconcileSession } from './pages/ReconcileSession';
 import { Discrepancies } from './pages/Discrepancies';
 import { Analytics } from './pages/Analytics';
@@ -10,6 +11,7 @@ export default function App() {
     <Layout>
       <Routes>
         <Route path="/" element={<SessionsList />} />
+        <Route path="/reconcile" element={<ReconcileQueue />} />
         <Route path="/reconcile/:id" element={<ReconcileSession />} />
         <Route path="/discrepancies" element={<Discrepancies />} />
         <Route path="/analytics" element={<Analytics />} />

@@ -155,3 +155,140 @@ tbody tr:hover { background: #fafbfd; }
   .nav a { padding: 10px; }
   .main { padding: 16px; }
 }
+... chart grid styles ...
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 16px;
+  margin-bottom: 20px;
+}
+@media (max-width: 900px) {
+  .chart-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chart-card {
+  margin-bottom: 20px;
+}
+
+.chart-header {
+  margin-bottom: 16px;
+}
+.chart-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+.chart-header p {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.chart-canvas {
+  position: relative;
+  height: 300px;
+  width: 100%;
+}
+
+.main { overflow-x: hidden; min-width: 0; }
+.chart-grid > * { min-width: 0; }
+.chart-canvas { overflow: hidden; }
+.chart-card { min-width: 0; overflow: hidden; }
+.summary { min-width: 0; }
+
+.reconcile-queue {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.reconcile-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.15s, transform 0.05s;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.reconcile-card:hover {
+  box-shadow: var(--shadow-md);
+}
+.reconcile-card.pending {
+  border-left: 4px solid var(--warning);
+}
+.reconcile-card.counted {
+  border-left: 4px solid var(--primary);
+}
+.reconcile-card.closed {
+  border-left: 4px solid var(--success);
+  opacity: 0.85;
+}
+
+.reconcile-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.reconcile-card-register {
+  font-size: 20px;
+  font-weight: 700;
+  font-family: 'SF Mono', Menlo, Consolas, monospace;
+  line-height: 1.1;
+}
+.reconcile-card-store {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.reconcile-card-totals {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  padding: 12px;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+}
+
+.reconcile-total-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.reconcile-total-label {
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+}
+.reconcile-total-value {
+  font-family: 'SF Mono', Menlo, Consolas, monospace;
+  font-weight: 700;
+  font-size: 13px;
+  word-break: break-word;
+}
+
+.reconcile-card-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@media (max-width: 600px) {
+  .reconcile-card-totals {
+    grid-template-columns: 1fr;
+  }
+  .reconcile-queue {
+    grid-template-columns: 1fr;
+  }
+}

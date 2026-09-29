@@ -15,6 +15,7 @@ import { registerGRNCompletedHandler } from './events/handlers/goods-received-no
 import { buildInventoryGrpcHandlers } from './grpc/inventory.grpc-handler';
 import { StockService } from './modules/stock/stock.service';
 import { startOutboxWorker } from './shared/outbox.worker';
+import { registerPutawayCompletedHandler } from './events/handlers/warehouse-putaway-completed.handler';
 
 async function main(): Promise<void> {
   const logger = new Logger({ serviceName: config.SERVICE_NAME, level: config.LOG_LEVEL });
@@ -29,6 +30,7 @@ startOutboxWorker(bus, logger);
 
   const stockService = new StockService();
   await registerGRNCompletedHandler(bus, logger, stockService);
+  await registerPutawayCompletedHandler(bus, logger, stockService);
 
   const app = express();
   app.use(cors());

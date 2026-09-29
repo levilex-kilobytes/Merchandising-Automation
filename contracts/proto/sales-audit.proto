@@ -1,0 +1,30 @@
+syntax = "proto3";
+package mfa.audit.v1;
+
+service SalesAuditService {
+  rpc GetRegisterSession (GetRegisterSessionRequest) returns (RegisterSessionReply);
+  rpc GetReconciliation (GetReconciliationRequest) returns (ReconciliationReply);
+}
+
+message GetRegisterSessionRequest { string id = 1; }
+message GetReconciliationRequest { string id = 1; }
+
+message RegisterSessionReply {
+  string id = 1;
+  string register_code = 2;
+  string store_location = 3;
+  string business_date = 4;
+  string status = 5;
+  double expected_total = 6;
+  double counted_total = 7;
+  double difference = 8;
+}
+
+message ReconciliationReply {
+  string id = 1;
+  string register_session_id = 2;
+  double overage = 3;
+  double shortage = 4;
+  string explanation = 5;
+  string signed_off_by = 6;
+}

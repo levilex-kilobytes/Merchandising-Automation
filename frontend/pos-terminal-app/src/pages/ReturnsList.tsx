@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { RotateCcw } from 'lucide-react';
 import { retailApi } from '../api/retail';
+import { formatDateTime, formatDate } from '../utils/format';
 
 const fmt = (n: number) => `KES ${n.toFixed(2)}`;
 
@@ -48,7 +49,7 @@ export function ReturnsList() {
                 <td>{r.storeLocation}</td>
                 <td><span className="cell-mono">{fmt(r.refundTotal)}</span></td>
                 <td><span className={`badge badge-${r.status}`}>{r.status}</span></td>
-                <td>{new Date(r.completedAt ?? r.createdAt).toLocaleString()}</td>
+                <td>{formatDateTime(r.completedAt ?? r.createdAt)}</td>
               </tr>
             ))}
           </tbody>

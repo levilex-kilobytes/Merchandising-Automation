@@ -6,6 +6,7 @@ import { CapacityBar } from '../components/Badge';
 import { EmptyState } from '../components/EmptyState';
 import { TableSkeleton, Skeleton } from '../components/Skeleton';
 import { StatCard } from '../components/StatCard';
+import { formatDateTime, formatDate } from '../utils/format';
 
 type Tab = 'overview' | 'bins';
 
@@ -94,7 +95,7 @@ export function ZoneCapacity() {
                         <div className={`zone-card-fill zone-fill-${tone}`} style={{ width: `${pct}%` }} />
                       </div>
                       <div className="zone-card-stats">
-                        <span><strong>{z.used.toLocaleString()}</strong> / {z.capacity.toLocaleString()} units</span>
+                        <span><strong>{formatDateTime(z.used)}</strong> / {formatDateTime(z.capacity)} units</span>
                         {z.nearFull > 0 && (
                           <span className="zone-badge zone-badge-danger">{z.nearFull} near full</span>
                         )}

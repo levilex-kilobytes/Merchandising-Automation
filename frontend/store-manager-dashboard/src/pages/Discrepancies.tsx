@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { AlertTriangle } from 'lucide-react';
 import { auditApi } from '../api/audit';
+import { formatISODate } from '../utils/format';
 
 const fmt = (n: number) => `KES ${Math.abs(n).toFixed(2)}`;
 
@@ -38,7 +39,7 @@ export function Discrepancies() {
               <div>
                 <div className="discrepancy-register">{s.registerCode}</div>
                 <div className="discrepancy-meta">
-                  {s.storeLocation} · {s.businessDate} · {s.cashierId ?? 'unknown cashier'}
+                  {s.storeLocation} · {formatISODate(s.businessDate)} · {s.cashierId ?? 'unknown cashier'}
                 </div>
               </div>
               <div className={`discrepancy-diff ${isShortage ? 'diff-negative' : 'diff-positive'}`}>

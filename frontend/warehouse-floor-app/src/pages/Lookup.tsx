@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Search, MapPin, Package, X } from 'lucide-react';
-import { warehouseExtApi } from '../api/warehouse';
-import { EmptyState } from '../components/EmptyState';
-import { Skeleton } from '../components/Skeleton';
+import { Search, MapPin, Package, X, AlertTriangle } from 'lucide-react';
+import { findBySku } from '../api/lookup';
 import { useToast } from '../components/ToastProvider';
 
 export function Lookup() {
@@ -13,8 +11,9 @@ export function Lookup() {
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['lookup', submitted],
-    queryFn: () => warehouseExtApi.findBySku(submitted),
+    queryFn: () => findBySku(submitted),
     enabled: submitted.length > 0,
+    retry: false,
   });
 
   const submit = (e: React.FormEvent) => {
@@ -32,7 +31,8 @@ export function Lookup() {
     setSubmitted('');
   };
 
-  const totalUnits = data?.reduce((sum, b) => sum + b.quantity, 0) ?? 0;
+  const results = data ?? [];
+  const totalUnits = results.reduce((s, r) => s + r.quantity, 0);
 
   return (
     <>
@@ -69,31 +69,34 @@ export function Lookup() {
 
       {isLoading && (
         <div className="skeleton-rows" style={{ marginTop: 20 }}>
-          <Skeleton className="skeleton-row" />
-          <Skeleton className="skeleton-row" />
+          <div className="skeleton skeleton-row" />
+          <div className="skeleton skeleton-row" />
         </div>
       )}
 
       {error && (
         <div className="error-box" style={{ marginTop: 20 }}>
-          Search failed. Try again.
+          <AlertTriangle size={16} />
+          {error instanceof Error ? error.message : 'Search failed — is the Inventory service running?'}
         </div>
       )}
 
-      {submitted && data && data.length === 0 && (
-        <EmptyState
-          icon={<Package size={30} />}
-          title={`No bins hold ${submitted}`}
-          hint="Either the SKU doesn't exist, or all units are in transit / already picked."
-        />
+      {submitted && !isLoading && !error && results.length === 0 && (
+        <div className="empty">
+          <div className="empty-icon"><Package size={30} /></div>
+          <div className="empty-title">No bins hold {submitted}</div>
+          <div className="empty-hint">
+            Either the SKU doesn't exist in Inventory, or all units are in transit / already picked.
+          </div>
+        </div>
       )}
 
-      {submitted && data && data.length > 0 && (
+      {submitted && results.length > 0 && (
         <>
           <div className="lookup-summary">
             <div className="lookup-summary-item">
-              <span className="lookup-summary-num">{data.length}</span>
-              <span className="lookup-summary-label">bin{data.length > 1 ? 's' : ''}</span>
+              <span className="lookup-summary-num">{results.length}</span>
+              <span className="lookup-summary-label">bin{results.length > 1 ? 's' : ''}</span>
             </div>
             <div className="lookup-summary-item">
               <span className="lookup-summary-num">{totalUnits}</span>
@@ -102,35 +105,41 @@ export function Lookup() {
           </div>
 
           <ul className="lookup-results">
-            {data.map(({ location, quantity }) => {
-              const pct = location.capacity === 0 ? 0
-                : Math.round((location.used / location.capacity) * 100);
+            {results.map((r, i) => {
+              const bin = r.bin;
+              const pct = bin.capacity === 0 ? 0 : Math.round((bin.used / bin.capacity) * 100);
               return (
-                <li key={location.id} className="lookup-result">
+                <li key={`${bin.code}-${i}`} className="lookup-result">
                   <div className="lookup-result-head">
                     <span className="lookup-result-code">
-                      <MapPin size={16} /> <code>{location.code}</code>
+                      <MapPin size={16} />
+                      <code>{bin.code}</code>
                     </span>
                     <span className="lookup-result-qty">
-                      <strong>{quantity}</strong> units here
+                      <strong>{r.quantity}</strong> unit{r.quantity === 1 ? '' : 's'} here
                     </span>
                   </div>
                   <div className="lookup-result-meta">
-                    Zone {location.zone} · Aisle {location.aisle} ·
-                    Rack {location.rack} · Shelf {location.shelf}
+                    {bin.zone !== '—' ? (
+                      <>Zone {bin.zone} · Aisle {bin.aisle} · Rack {bin.rack} · Shelf {bin.shelf}</>
+                    ) : (
+                      <>Location details not found in Warehouse Ops (bin <code>{bin.code}</code> may not exist there)</>
+                    )}
                   </div>
-                  <div className="capacity-wrap" style={{ marginTop: 10 }}>
-                    <div className="capacity-label">
-                      <span>Bin {location.used} / {location.capacity}</span>
-                      <span>{pct}%</span>
+                  {bin.capacity > 0 && (
+                    <div className="capacity-wrap" style={{ marginTop: 10 }}>
+                      <div className="capacity-label">
+                        <span>Bin {bin.used} / {bin.capacity}</span>
+                        <span>{pct}%</span>
+                      </div>
+                      <div className="capacity-bar">
+                        <div
+                          className={`capacity-bar-fill ${pct >= 90 ? 'capacity-full' : pct >= 70 ? 'capacity-warn' : 'capacity-ok'}`}
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
                     </div>
-                    <div className="capacity-bar">
-                      <div
-                        className={`capacity-bar-fill ${pct >= 90 ? 'capacity-full' : pct >= 70 ? 'capacity-warn' : 'capacity-ok'}`}
-                        style={{ width: `${pct}%` }}
-                      />
-                    </div>
-                  </div>
+                  )}
                 </li>
               );
             })}
