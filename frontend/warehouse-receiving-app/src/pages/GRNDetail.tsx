@@ -6,9 +6,7 @@ import { receivingApi } from '../api/receiving';
 import { GRNLine, LineCondition } from '../api/types';
 import { useToast } from '../components/ToastProvider';
 import { StatCard } from '../components/StatCard';
-import { formatDateTime, formatDate } from '../utils/format';
-
-const fmt = (n: number) => `KES ${n.toFixed(2)}`;
+import { formatDateTime } from '../utils/format';
 
 export function GRNDetail() {
   const { id = '' } = useParams();

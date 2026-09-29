@@ -19,7 +19,7 @@ export class SaleService {
     if (!input.lines.length) throw new ValidationError('Sale must have at least one line');
     if (!input.payments.length) throw new ValidationError('Sale must have at least one payment');
 
-    const priced = [];
+    const priced: Array<{ productCode: string; productName: string; quantity: number; unitPrice: number; discountAmount: number; lineTotal: number }> = [];
     let subtotal = 0;
     let discountTotal = 0;
 

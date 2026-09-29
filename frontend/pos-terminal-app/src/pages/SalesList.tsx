@@ -5,7 +5,7 @@ import { retailApi } from '../api/retail';
 import { Sale } from '../api/types';
 import { useToast } from '../components/ToastProvider';
 import { ConfirmDialog } from '../components/ConfirmDialog';
-import { formatDateTime, formatDate } from '../utils/format';
+import { formatDateTime } from '../utils/format';
 
 const fmt = (n: number) => `KES ${n.toFixed(2)}`;
 
@@ -124,7 +124,6 @@ export function SalesList() {
     </>
   );
 }
-
 
 function ReturnDialog({ sale, onClose, onSuccess }: { sale: Sale; onClose: () => void; onSuccess: () => void }) {
   const { push } = useToast();

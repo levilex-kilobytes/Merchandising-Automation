@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ClipboardCheck, Clock, AlertTriangle, CheckCircle2, ArrowRight, Banknote } from 'lucide-react';
 import { auditApi } from '../api/audit';
 import { StatCard } from '../components/StatCard';
-import { formatDateTime, formatISODate, formatDate } from '../utils/format';
+import { formatDateTime, formatISODate } from '../utils/format';
 
 const fmt = (n: number) => `KES ${n.toFixed(2)}`;
 
@@ -124,7 +124,6 @@ export function ReconcileQueue() {
         <div className="reconcile-queue">
           {visible.map((s) => {
             const needsCount = s.status === 'open';
-            const needsSignoff = s.status === 'counted';
             const isClosed = s.status === 'closed';
             const short = s.difference < 0;
             const balanced = s.difference === 0;

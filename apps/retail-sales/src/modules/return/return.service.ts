@@ -20,7 +20,7 @@ export class ReturnService {
     if (sale.status !== 'completed') throw new ConflictError(`Cannot return against ${sale.status} sale`);
 
     const saleLines = sale.lines ?? [];
-    const priced = [];
+    const priced: Array<{ productCode: string; quantity: number; refundAmount: number }> = [];
     let refundTotal = 0;
 
     for (const l of input.lines) {

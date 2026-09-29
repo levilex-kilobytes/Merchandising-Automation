@@ -1,12 +1,6 @@
 import { ReactNode } from "react";
 import { NavLink } from "react-router-dom";
-import {
-  Landmark,
-  BookText,
-  Receipt,
-  TrendingUp,
-  FileBarChart,
-} from "lucide-react";
+import { Landmark, BookText, Receipt, FileBarChart } from "lucide-react";
 
 const NAV = [
   { to: "/", label: "Overview", icon: Landmark, end: true },

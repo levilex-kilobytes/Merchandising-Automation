@@ -8,7 +8,7 @@ import { EmptyState } from '../components/EmptyState';
 import { TableSkeleton } from '../components/Skeleton';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { useToast } from '../components/ToastProvider';
-import { formatDateTime, formatDate } from '../utils/format';
+import { formatDateTime } from '../utils/format';
 
 export function TransferList() {
   const [status, setStatus] = useState('');

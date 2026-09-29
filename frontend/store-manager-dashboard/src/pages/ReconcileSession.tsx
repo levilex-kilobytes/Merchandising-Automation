@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { auditApi } from '../api/audit';
 import { useToast } from '../components/ToastProvider';
-import { formatDateTime, formatISODate, formatDate } from '../utils/format';
+import { formatDateTime, formatISODate } from '../utils/format';
 
 const fmt = (n: number) => `KES ${n.toFixed(2)}`;
 const parseNum = (raw: string): number => {

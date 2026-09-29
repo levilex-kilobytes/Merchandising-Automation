@@ -2,15 +2,13 @@ import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Coins, Package, MapPin, AlertTriangle, BarChart3 } from 'lucide-react';
 import { inventoryApi } from '../api/inventory';
-import { StockItem, StockMovement } from '../api/types';
 import { StatCard } from '../components/StatCard';
 import { Bar, Doughnut, Line } from '../components/Charts';
-import { formatDateTime, formatDate } from '../utils/format';
+import { formatDateTime } from '../utils/format';
 
-const shortMoney = (n: number) =>
-  `KES ${n.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-const fullMoney = (n: number) =>
-  `KES ${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+const shortMoney = (n: number) => `KES ${n.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+const fullMoney = (n: number) => `KES ${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
 
 const COLORS = {
   primary: '#0d9488',
@@ -47,7 +45,7 @@ export function Analytics() {
     queryFn: () => inventoryApi.listStock(),
   });
 
-  const { data: movements, isLoading: loadingMovements } = useQuery({
+  const { data: movements } = useQuery({
     queryKey: ['movements', { location: '' }],
     queryFn: () => inventoryApi.listMovements().catch(() => []),
   });

@@ -4,7 +4,7 @@ import { ScanLine, Trash2, Plus, Minus, CreditCard, Banknote, Gift, Check, X } f
 import { retailApi } from '../api/retail';
 import { PaymentMethod, RetailPrice, Sale } from '../api/types';
 import { useToast } from '../components/ToastProvider';
-import { formatDateTime, formatDate } from '../utils/format';
+import { formatDateTime } from '../utils/format';
 
 interface CartLine {
   productCode: string;
@@ -23,7 +23,6 @@ export function Terminal() {
   const { push } = useToast();
   const [cart, setCart] = useState<CartLine[]>([]);
   const [sku, setSku] = useState('');
-  const [scanInputRef, setScanInputRef] = useState<HTMLInputElement | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cash');
   const [completed, setCompleted] = useState<Sale | null>(null);
   const [flash, setFlash] = useState<'success' | 'error' | null>(null);
@@ -135,7 +134,7 @@ export function Terminal() {
           <div className="pos-scanner-wrap">
             <ScanLine className="pos-scanner-icon" size={22} />
             <input
-              ref={(el) => { inputRef.current = el; setScanInputRef(el); }}
+              ref={inputRef}
               value={sku}
               onChange={(e) => setSku(e.target.value)}
               placeholder="Scan or type SKU + Enter…"

@@ -4,16 +4,18 @@ import { Link } from 'react-router-dom';
 import { ShoppingCart, CheckCircle2, Clock, ArrowRight, PackageOpen, Plus, AlertTriangle, X } from 'lucide-react';
 import { warehouseApi } from '../api/warehouse';
 import { useToast } from '../components/ToastProvider';
+
 import { StatCard } from '../components/StatCard';
-import { formatDateTime, formatDate } from '../utils/format';
+import { formatDateTime } from '../utils/format';
 
 type Tab = 'pending' | 'completed' | 'all';
 
 export function PickList() {
   const [tab, setTab] = useState<Tab>('pending');
+  const { push } = useToast();
 
   const [createOpen, setCreateOpen] = useState(false);
-  const { push } = useToast();
+
   const qc = useQueryClient();
 
   const { data: allTasks, isLoading, error } = useQuery({
@@ -151,7 +153,6 @@ export function PickList() {
   );
 }
 
-
 function CreatePickModal({
   onClose,
   onSuccess,
@@ -159,7 +160,7 @@ function CreatePickModal({
   onClose: () => void;
   onSuccess: () => void;
 }) {
-  const { push } = useToast();
+
   const [productCode, setProductCode] = useState('');
   const [productName, setProductName] = useState('');
   const [quantity, setQuantity] = useState(1);

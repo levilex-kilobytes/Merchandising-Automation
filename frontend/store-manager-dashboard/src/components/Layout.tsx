@@ -1,11 +1,6 @@
 import { ReactNode } from "react";
 import { NavLink } from "react-router-dom";
-import {
-  LayoutDashboard,
-  ClipboardCheck,
-  AlertTriangle,
-  TrendingUp,
-} from "lucide-react";
+import { LayoutDashboard, ClipboardCheck, AlertTriangle, TrendingUp } from "lucide-react";
 
 const NAV = [
   { to: "/", label: "Sessions", icon: LayoutDashboard, end: true },

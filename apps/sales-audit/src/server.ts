@@ -52,7 +52,7 @@ async function main(): Promise<void> {
   const Service = proto.mfa.audit.v1.SalesAuditService;
 
   const server = new grpc.Server();
-  server.addService(Service.service, buildSalesAuditGrpcHandlers(registerService));
+  server.addService(Service.service, buildSalesAuditGrpcHandlers(registerService) as unknown as grpc.UntypedServiceImplementation);
   server.bindAsync(`${config.GRPC_HOST}:${config.GRPC_PORT}`, grpc.ServerCredentials.createInsecure(), (err, port) => {
     if (err) { logger.error('gRPC bind failed', { err: String(err) }); process.exit(1); }
     logger.info('gRPC listening', { host: config.GRPC_HOST, port });

@@ -6,7 +6,7 @@ import { CapacityBar } from '../components/Badge';
 import { EmptyState } from '../components/EmptyState';
 import { TableSkeleton, Skeleton } from '../components/Skeleton';
 import { StatCard } from '../components/StatCard';
-import { formatDateTime, formatDate } from '../utils/format';
+import { formatDateTime } from '../utils/format';
 
 type Tab = 'overview' | 'bins';
 

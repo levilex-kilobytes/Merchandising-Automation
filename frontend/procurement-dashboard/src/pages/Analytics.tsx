@@ -6,10 +6,9 @@ import { PurchaseOrder } from '../api/types';
 import { StatCard } from '../components/StatCard';
 import { Bar, Doughnut, Line } from '../components/Charts';
 
-const shortMoney = (n: number, currency = 'KES') =>
-  `${currency} ${n.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-const fullMoney = (n: number, currency = 'KES') =>
-  `${currency} ${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+const shortMoney = (n: number) => `KES ${n.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+const fullMoney = (n: number) => `KES ${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
 
 const COLORS = {
   primary: '#0284c7',

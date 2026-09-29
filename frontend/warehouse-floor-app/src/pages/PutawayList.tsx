@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Package, CheckCircle2, Clock, ArrowRight, PackageOpen } from 'lucide-react';
 import { warehouseApi } from '../api/warehouse';
 import { StatCard } from '../components/StatCard';
-import { formatDateTime, formatDate } from '../utils/format';
+import { formatDateTime } from '../utils/format';
 
 type Tab = 'pending' | 'completed' | 'all';
 

@@ -185,7 +185,7 @@ export function PurchaseOrders() {
     if (formBanner) setFormBanner(null);
   };
 
-  const setField = (key: string, clearKeys: string[]) => {
+  const setField = (clearKeys: string[]) => {
     setFieldErrors((prev) => {
       const next = { ...prev };
       for (const k of clearKeys) delete next[k];
@@ -374,7 +374,7 @@ export function PurchaseOrders() {
             {suppliers && (
               <select
                 value={supplierId}
-                onChange={(e) => { setSupplierId(e.target.value); setField('supplierId', ['supplierId', 'supplier_id']); }}
+                onChange={(e) => { setSupplierId(e.target.value); setField(['supplierId', 'supplier_id']); }}
                 className={errSupplier ? 'input-error' : ''}
               >
                 <option value="">— Choose a supplier —</option>
@@ -399,7 +399,7 @@ export function PurchaseOrders() {
             <label>Currency <span style={{ color: 'var(--danger)' }}>*</span></label>
             <select
               value={currency}
-              onChange={(e) => { setCurrency(e.target.value); setField('currency', ['currency']); }}
+              onChange={(e) => { setCurrency(e.target.value); setField(['currency']); }}
               className={errCurrency ? 'input-error' : ''}
             >
               <option value="KES">KES — Kenyan Shilling</option>
@@ -418,7 +418,7 @@ export function PurchaseOrders() {
             <input
               type="date"
               value={expectedDate}
-              onChange={(e) => { setExpectedDate(e.target.value); setField('expectedDate', ['expectedDate', 'expected_date']); }}
+              onChange={(e) => { setExpectedDate(e.target.value); setField(['expectedDate', 'expected_date']); }}
               className={errExpectedDate ? 'input-error' : ''}
             />
             {errExpectedDate ? <FieldError message={errExpectedDate} /> : <p className="field-help">When you expect the goods to arrive at your dock.</p>}
@@ -481,7 +481,7 @@ export function PurchaseOrders() {
             <label>Notes (optional)</label>
             <textarea
               value={notes}
-              onChange={(e) => { setNotes(e.target.value); setField('notes', ['notes']); }}
+              onChange={(e) => { setNotes(e.target.value); setField(['notes']); }}
               rows={2}
               placeholder="Delivery window, shipping instructions, payment details…"
               className={errNotes ? 'input-error' : ''}

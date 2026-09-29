@@ -1,13 +1,6 @@
 import { ReactNode } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import {
-  Boxes,
-  ShoppingCart,
-  Truck,
-  Search,
-  Grid3x3,
-  WifiOff,
-} from "lucide-react";
+import { Boxes, ShoppingCart, Truck, Search, Grid3x3, WifiOff } from "lucide-react";
 import { useOnline } from "../hooks/useOnline";
 
 const NAV = [

@@ -62,7 +62,7 @@ startOutboxWorker(bus, logger);
   const server = new grpc.Server();
   server.addService(WarehouseService.service, buildWarehouseGrpcHandlers(
     locationService, putawayService, pickingService, transferService,
-  ));
+  ) as unknown as grpc.UntypedServiceImplementation);
   server.bindAsync(`${config.GRPC_HOST}:${config.GRPC_PORT}`, grpc.ServerCredentials.createInsecure(), (err, port) => {
     if (err) { logger.error('gRPC bind failed', { err: String(err) }); process.exit(1); }
     logger.info('gRPC listening', { host: config.GRPC_HOST, port });

@@ -2,14 +2,12 @@ import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ShoppingCart, Receipt, RotateCcw, TrendingUp, BarChart3, CreditCard, Banknote, Gift } from 'lucide-react';
 import { retailApi } from '../api/retail';
-import { Sale, SaleReturn } from '../api/types';
 import { StatCard } from '../components/StatCard';
 import { Bar, Doughnut, Line } from '../components/Charts';
 
-const shortMoney = (n: number) =>
-  `KES ${n.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-const fullMoney = (n: number) =>
-  `KES ${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+const shortMoney = (n: number) => `KES ${n.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+const fullMoney = (n: number) => `KES ${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
 
 const COLORS = {
   primary: '#0f766e',

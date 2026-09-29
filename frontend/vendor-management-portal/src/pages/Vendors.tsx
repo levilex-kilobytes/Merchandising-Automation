@@ -1,10 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  Building2, Search, X, Plus, CheckCircle2, AlertTriangle,
-  Pencil, Ban, History, ChevronRight, ChevronLeft, Mail, Phone, Calendar,
-  Trash2, Package, Copy,
-} from 'lucide-react';
+import { Building2, Search, X, Plus, CheckCircle2, AlertTriangle, Pencil, Ban, History, ChevronRight, ChevronLeft, Mail, Phone, Calendar, Trash2, Package, Copy } from 'lucide-react';
 import { vendorsApi } from '../api/vendors';
 import { ApiError, getFieldError } from '../api/client';
 import { Vendor, VendorHistoryEvent, PaymentTerms, SupplierStatus } from '../api/types';
@@ -12,14 +8,9 @@ import { useToast } from '../components/ToastProvider';
 import { StatCard } from '../components/StatCard';
 import { CountryCodeSelect, COUNTRIES, DEFAULT_COUNTRY } from '../components/CountryCodeSelect';
 import { CurrencySelect } from '../components/CurrencySelect';
-import { formatDateTime, formatDate } from '../utils/format';
+import { formatDateTime } from '../utils/format';
 
 const str = (v: unknown): string => (typeof v === 'string' ? v : '');
-const num = (v: unknown): number => {
-  const n = Number(v);
-  return Number.isFinite(n) ? n : 0;
-};
-
 const PAYMENT_TERMS: Array<{ value: PaymentTerms; label: string }> = [
   { value: 'COD', label: 'COD — Cash on delivery' },
   { value: 'NET_15', label: 'Net 15 — pay within 15 days' },

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { RotateCcw } from 'lucide-react';
 import { retailApi } from '../api/retail';
-import { formatDateTime, formatDate } from '../utils/format';
+import { formatDateTime } from '../utils/format';
 
 const fmt = (n: number) => `KES ${n.toFixed(2)}`;
 

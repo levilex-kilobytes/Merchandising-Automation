@@ -6,10 +6,7 @@ import { receivingApi } from '../api/receiving';
 import { listReceivablePurchaseOrders, POOption } from '../api/purchaseOrders';
 import { useToast } from '../components/ToastProvider';
 import { StatCard } from '../components/StatCard';
-import { formatDateTime, formatDate } from '../utils/format';
-
-const fmt = (n: number, currency = 'KES') =>
-  `${currency} ${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+import { formatDateTime } from '../utils/format';
 
 export function GRNList() {
   const [status, setStatus] = useState('');

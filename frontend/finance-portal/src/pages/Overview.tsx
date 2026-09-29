@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { TrendingUp, TrendingDown, Coins, Receipt, FileText, ArrowRight } from 'lucide-react';
+import { TrendingUp, TrendingDown, Coins, Receipt, ArrowRight } from 'lucide-react';
 import { financeApi } from '../api/finance';
 import { StatCard } from '../components/StatCard';
 import { Bar, Doughnut } from '../components/Charts';

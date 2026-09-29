@@ -1,15 +1,12 @@
 import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Building2, CheckCircle2, Clock, DollarSign, BarChart3, Globe, TrendingUp } from 'lucide-react';
+import { Building2, CheckCircle2, BarChart3, Globe, TrendingUp } from 'lucide-react';
 import { vendorsApi } from '../api/vendors';
-import { Vendor } from '../api/types';
-import { StatCard } from '../components/StatCard';
-import { Bar, Doughnut, Scatter } from '../components/Charts';
 
-const shortMoney = (n: number, currency = 'KES') =>
-  `${currency} ${n.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
-const fullMoney = (n: number, currency = 'KES') =>
-  `${currency} ${n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+import { StatCard } from '../components/StatCard';
+import { Bar, Doughnut } from '../components/Charts';
+
+
 
 const COLORS = {
   primary: '#4f46e5',

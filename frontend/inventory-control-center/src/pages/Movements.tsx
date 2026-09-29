@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Activity, Search, X } from 'lucide-react';
 import { inventoryApi } from '../api/inventory';
 import { StockMovement } from '../api/types';
-import { formatDateTime, formatDate } from '../utils/format';
+import { formatDateTime } from '../utils/format';
 
 const movementLabel: Record<StockMovement['movementType'], string> = {
   received: 'Received',

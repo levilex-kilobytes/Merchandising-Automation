@@ -1,15 +1,11 @@
 import { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  Package, ChevronRight, Plus, AlertTriangle, Building2, Search, X,
-  Pencil, DollarSign, History, Calendar,
-} from 'lucide-react';
+import { Package, ChevronRight, Plus, AlertTriangle, Building2, Search, X, DollarSign, History, Calendar } from 'lucide-react';
 import { vendorsApi } from '../api/vendors';
-import { ApiError, getFieldError } from '../api/client';
 import { Vendor, VendorProduct } from '../api/types';
 import { useToast } from '../components/ToastProvider';
 import { CurrencySelect } from '../components/CurrencySelect';
-import { formatDateTime, formatDate } from '../utils/format';
+import { formatDateTime } from '../utils/format';
 
 const num = (v: unknown): number => {
   const n = Number(v);
@@ -66,13 +62,8 @@ export function Products() {
     );
   }, [products, productSearch]);
 
-  const catalogValue = useMemo(
-    () => (products ?? []).reduce((s, p) => s + num(p.unitCost), 0),
-    [products],
-  );
-
   const addProduct = useMutation({
-    mutationFn: (input: { productCode: string; productName: string; unitCost: number; currency: string; leadTimeDays: number }) =>
+    mutationFn: (input: { productCode: string; productName: string; unitCost: number; currency: string; leadTimeDays: number; minOrderQty: number }) =>
       vendorsApi.addProduct(selected!.id, input),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['vendor-products', selected?.id] });
@@ -355,7 +346,7 @@ function AddProductModal({
     if (!productCode.trim()) e.productCode = 'Product code is required';
     else if (productCode.trim().length > 100) e.productCode = 'Max 100 characters';
     if (!productName.trim()) e.productName = 'Product name is required';
-    if (newCost <= 0) e.newCost = 'New cost must be greater than zero';
+    if (unitCost <= 0) e.unitCost = 'Unit cost must be greater than zero';
     if (!currency || currency.length !== 3) e.currency = 'Pick a 3-letter currency';
     if (leadTimeDays < 0) e.leadTimeDays = 'Cannot be negative';
     setErrors(e);
