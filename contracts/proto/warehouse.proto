@@ -1,0 +1,54 @@
+syntax = "proto3";
+package mfa.warehouse.v1;
+
+service WarehouseService {
+  rpc GetLocation (GetLocationRequest) returns (LocationReply);
+  rpc GetPutawayTask (GetPutawayTaskRequest) returns (PutawayTaskReply);
+  rpc GetPickTask (GetPickTaskRequest) returns (PickTaskReply);
+  rpc GetTransfer (GetTransferRequest) returns (TransferReply);
+}
+
+message GetLocationRequest { string code = 1; }
+
+message LocationReply {
+  string id = 1;
+  string code = 2;
+  string zone = 3;
+  string aisle = 4;
+  string rack = 5;
+  string shelf = 6;
+  string bin = 7;
+  int32 capacity = 8;
+  int32 used = 9;
+}
+
+message GetPutawayTaskRequest { string id = 1; }
+
+message PutawayTaskReply {
+  string id = 1;
+  string goods_received_note_id = 2;
+  string product_code = 3;
+  int32 quantity = 4;
+  string assigned_bin = 5;
+  string status = 6;
+}
+
+message GetPickTaskRequest { string id = 1; }
+
+message PickTaskReply {
+  string id = 1;
+  string product_code = 2;
+  int32 quantity = 3;
+  string from_bin = 4;
+  string to_location = 5;
+  string status = 6;
+}
+
+message GetTransferRequest { string id = 1; }
+
+message TransferReply {
+  string id = 1;
+  string from_location = 2;
+  string to_location = 3;
+  string status = 4;
+}

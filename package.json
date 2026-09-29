@@ -5,7 +5,8 @@
   "workspaces": [
     "apps/*",
     "packages/*",
-    "frontend/*"
+    "frontend/*",
+    "services/*"
   ],
   "scripts": {
     "dev:vendor": "npm --workspace=@mfa/vendor-management run dev",
@@ -26,7 +27,11 @@
     "build:warehouse-receiving": "npm --workspace=@mfa/warehouse-receiving-app run build",
     "dev:inventory": "npm --workspace=@mfa/inventory run dev",
     "migrate:inventory": "npm --workspace=@mfa/inventory run migrate",
-    "dev:inventory-ui": "npm --workspace=@mfa/inventory-control-center run dev"
+    "dev:inventory-ui": "npm --workspace=@mfa/inventory-control-center run dev",
+    "dev:warehouse": "npm --workspace=@mfa/warehouse-operations run dev",
+    "migrate:warehouse": "npm --workspace=@mfa/warehouse-operations run migrate",
+    "dev:warehouse-floor": "npm --workspace=@mfa/warehouse-floor-app run dev",
+    "build:warehouse-floor": "npm --workspace=@mfa/warehouse-floor-app run build"
   },
   "dependencies": {
     "amqplib": "^0.10.4",

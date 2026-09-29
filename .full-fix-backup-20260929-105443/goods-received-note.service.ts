@@ -100,9 +100,7 @@ export class GoodsReceivedNoteService {
           damages: grn.damages,
           lines: (grn.lines ?? []).map((l) => ({
             productCode: l.productCode,
-            productName: l.productName,
             receivedQty: l.receivedQty,
-            unitCost: l.unitCost,
           })),
         },
       });
