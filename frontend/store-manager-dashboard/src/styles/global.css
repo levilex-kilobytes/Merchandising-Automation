@@ -1,0 +1,120 @@
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --bg: #f1f5f9;
+  --panel: #ffffff;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --text: #0f172a;
+  --muted: #64748b;
+  --primary: #1e40af;
+  --primary-hover: #1d4ed8;
+  --primary-soft: #dbeafe;
+  --danger: #dc2626;
+  --danger-soft: #fee2e2;
+  --success: #16a34a;
+  --success-soft: #dcfce7;
+  --warning: #ea580c;
+  --warning-soft: #ffedd5;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.16);
+}
+
+html, body, #root { height: 100%; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+button {
+  font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+  border: 1px solid transparent; border-radius: var(--radius-sm);
+  padding: 10px 18px; min-height: 42px; transition: background 0.15s;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+}
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover:not(:disabled) { background: var(--primary-hover); }
+.btn-secondary { background: white; color: var(--text); border: 1px solid var(--border-strong); }
+.btn-secondary:hover:not(:disabled) { background: var(--bg); }
+.btn-success { background: var(--success); color: white; }
+.btn-danger { background: var(--danger); color: white; }
+.btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+.btn-sm { min-height: 34px; padding: 6px 12px; font-size: 13px; }
+.btn-lg { min-height: 52px; padding: 14px 24px; font-size: 16px; border-radius: var(--radius); width: 100%; }
+
+input, select, textarea {
+  font-family: inherit; font-size: 15px; padding: 10px 12px;
+  border: 1px solid var(--border-strong); border-radius: var(--radius-sm);
+  width: 100%; background: white; min-height: 42px; color: var(--text);
+}
+input:focus, select:focus, textarea:focus {
+  outline: none; border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.15);
+}
+label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 13px; }
+.field { margin-bottom: 16px; }
+
+code {
+  font-family: 'SF Mono', Menlo, Consolas, monospace;
+  background: #f1f5f9; padding: 3px 8px; border-radius: 6px; font-size: 13px;
+}
+.mono { font-family: 'SF Mono', Menlo, Consolas, monospace; }
+
+.toast-stack {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; gap: 8px; z-index: 1000;
+  width: min(92vw, 460px); pointer-events: none;
+}
+.toast {
+  pointer-events: auto; display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px; border-radius: var(--radius); background: #1e293b;
+  color: white; font-weight: 500; font-size: 14px;
+  box-shadow: var(--shadow-lg); animation: toast-in 0.22s ease-out;
+}
+.toast-success { background: var(--success); }
+.toast-error { background: var(--danger); }
+.toast-info { background: #334155; }
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #e9ecf1 25%, #f1f4f8 50%, #e9ecf1 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shine 1.4s infinite; border-radius: var(--radius-sm);
+}
+@keyframes skeleton-shine {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+.skeleton-row { height: 56px; margin-bottom: 10px; }
+
+.modal-backdrop {
+  position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 900; padding: 20px; animation: fade-in 0.15s ease-out;
+}
+.modal {
+  background: white; border-radius: var(--radius); padding: 24px;
+  width: min(100%, 480px); box-shadow: var(--shadow-lg);
+  animation: modal-in 0.2s ease-out; max-height: 90vh; overflow-y: auto;
+}
+.modal-title { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+.modal-message { color: var(--muted); margin-bottom: 20px; font-size: 14px; }
+.modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+.modal-actions button { flex: 1; }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modal-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
