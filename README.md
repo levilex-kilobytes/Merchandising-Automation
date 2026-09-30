@@ -1,5 +1,11 @@
 # Merchandising Funnel Automation (MMS)
 
+**Live demo:** [https://merchandising-automation-chg9.vercel.app](https://merchandising-automation-chg9.vercel.app)
+
+Frontend applications are deployed to Vercel. The eight backend services,
+Postgres, and RabbitMQ run locally for development. See
+[Local Development Setup](#local-development-setup) to start them.
+
 A distributed Merchandise Management System that digitally mirrors the physical
 flow of goods and money through a retail business. The system replaces
 spreadsheets, paper receipts, and manual data entry with eight autonomous
