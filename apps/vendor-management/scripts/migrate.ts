@@ -3,7 +3,7 @@ import { join } from 'path';
 import { pool } from '../src/config/database';
 
 async function run(): Promise<void> {
-  const dir = join(__dirname, '..', 'migrations');
+  const dir = join(process.cwd(), 'migrations');
   const files = readdirSync(dir).filter((f) => f.endsWith('.sql')).sort();
 
   await pool.query(`
