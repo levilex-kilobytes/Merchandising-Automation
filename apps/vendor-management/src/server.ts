@@ -16,6 +16,7 @@ import { buildVendorGrpcHandlers } from './grpc/vendor.grpc-handler';
 import { SupplierService } from './modules/supplier/supplier.service';
 import { SupplierProductService } from './modules/supplier-product/supplier-product.service';
 import { ReliabilityService } from './modules/reliability/reliability.service';
+import { startOutboxWorker } from './shared/outbox.worker';
 
 async function main(): Promise<void> {
   const logger = new Logger({
@@ -32,6 +33,7 @@ async function main(): Promise<void> {
     logger,
   });
   await bus.connect();
+startOutboxWorker(bus, logger);
 
   const publisher = new OutboxPublisher({
     outbox: new OutboxRepository(),

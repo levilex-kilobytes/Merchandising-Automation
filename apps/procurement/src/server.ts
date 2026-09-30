@@ -16,6 +16,7 @@ import { registerStockLowHandler } from './events/handlers/stock-low.handler';
 import { buildProcurementGrpcHandlers } from './grpc/procurement.grpc-handler';
 import { PurchaseOrderService } from './modules/purchase-order/purchase-order.service';
 import { ReorderService } from './modules/reorder/reorder.service';
+import { startOutboxWorker } from './shared/outbox.worker';
 
 async function main(): Promise<void> {
   const logger = new Logger({
@@ -32,6 +33,7 @@ async function main(): Promise<void> {
     logger,
   });
   await bus.connect();
+startOutboxWorker(bus, logger);
 
   const publisher = new OutboxPublisher({
     outbox: new OutboxRepository(),

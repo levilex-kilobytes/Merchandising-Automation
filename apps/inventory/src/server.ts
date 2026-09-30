@@ -14,6 +14,8 @@ import { OutboxPublisher } from './events/publisher';
 import { registerGRNCompletedHandler } from './events/handlers/goods-received-note-completed.handler';
 import { buildInventoryGrpcHandlers } from './grpc/inventory.grpc-handler';
 import { StockService } from './modules/stock/stock.service';
+import { startOutboxWorker } from './shared/outbox.worker';
+import { registerPutawayCompletedHandler } from './events/handlers/warehouse-putaway-completed.handler';
 
 async function main(): Promise<void> {
   const logger = new Logger({ serviceName: config.SERVICE_NAME, level: config.LOG_LEVEL });
@@ -21,12 +23,14 @@ async function main(): Promise<void> {
 
   const bus = new RabbitMQEventBus({ url: config.RABBITMQ_URL, exchange: config.EVENT_EXCHANGE, serviceName: config.SERVICE_NAME, logger });
   await bus.connect();
+startOutboxWorker(bus, logger);
 
   const publisher = new OutboxPublisher({ outbox: new OutboxRepository(), bus, intervalMs: config.OUTBOX_INTERVAL_MS, batchSize: config.OUTBOX_BATCH_SIZE, logger });
   publisher.start();
 
   const stockService = new StockService();
   await registerGRNCompletedHandler(bus, logger, stockService);
+  await registerPutawayCompletedHandler(bus, logger, stockService);
 
   const app = express();
   app.use(cors());

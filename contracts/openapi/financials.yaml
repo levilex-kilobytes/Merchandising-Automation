@@ -1,0 +1,14 @@
+openapi: 3.0.3
+info: { title: Financials API, version: 1.0.0 }
+servers: [{ url: 'http://localhost:3008/api/v1' }]
+paths:
+  /health: { get: { responses: { '200': { description: OK } } } }
+  /accounts: { get: { responses: { '200': { description: OK } } } }
+  /journal-entries: { get: { responses: { '200': { description: OK } } } }
+  /journal-entries/{id}: { get: { responses: { '200': { description: OK } } } }
+  /supplier-bills: { get: { responses: { '200': { description: OK } } } }
+  /supplier-bills/{id}/pay: { post: { responses: { '200': { description: OK } } } }
+  /reports/trial-balance: { get: { responses: { '200': { description: OK } } } }
+  /reports/profit-and-loss: { get: { responses: { '200': { description: OK } } } }
+  /reports/balance-sheet: { get: { responses: { '200': { description: OK } } } }
+  /reports/ap-aging: { get: { responses: { '200': { description: OK } } } }

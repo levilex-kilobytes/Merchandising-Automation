@@ -14,6 +14,7 @@ import { OutboxPublisher } from './events/publisher';
 import { registerPoApprovedHandler } from './events/handlers/purchase-order-approved.handler';
 import { buildReceivingGrpcHandlers } from './grpc/receiving.grpc-handler';
 import { GoodsReceivedNoteService } from './modules/goods-received-note/goods-received-note.service';
+import { startOutboxWorker } from './shared/outbox.worker';
 
 async function main(): Promise<void> {
   const logger = new Logger({
@@ -30,6 +31,7 @@ async function main(): Promise<void> {
     logger,
   });
   await bus.connect();
+startOutboxWorker(bus, logger);
 
   const publisher = new OutboxPublisher({
     outbox: new OutboxRepository(),

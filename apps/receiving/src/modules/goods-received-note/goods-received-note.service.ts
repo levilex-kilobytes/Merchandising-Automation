@@ -95,12 +95,15 @@ export class GoodsReceivedNoteService {
           goodsReceivedNoteId,
           purchaseOrderId: grn.purchaseOrderId,
           supplierId: grn.supplierId,
+          supplierName: grn.supplierName,
           grnDate: new Date().toISOString(),
           shortages: grn.shortages,
           damages: grn.damages,
           lines: (grn.lines ?? []).map((l) => ({
             productCode: l.productCode,
+            productName: l.productName,
             receivedQty: l.receivedQty,
+            unitCost: l.unitCost,
           })),
         },
       });

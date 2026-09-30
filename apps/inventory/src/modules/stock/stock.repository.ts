@@ -2,6 +2,7 @@ import { PoolClient } from 'pg';
 import { pool, withTransaction } from '../../config/database';
 import { StockItemRow, MovementRow, toStockItem, toMovement } from './stock.model';
 import { StockItem, StockMovement, ListStockQueryDto, MovementType } from './stock.types';
+import { ConflictError, NotFoundError } from '@mfa/errors';
 
 export class StockRepository {
   withTransaction = withTransaction;
