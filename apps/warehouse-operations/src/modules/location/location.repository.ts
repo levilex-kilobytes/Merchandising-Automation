@@ -48,4 +48,11 @@ export class LocationRepository {
     );
     return rows[0] ? toLocation(rows[0]) : null;
   }
+
+  async findFirstActive(tx: PoolClient): Promise<Location | null> {
+    const { rows } = await tx.query<LocationRow>(
+      `SELECT * FROM locations WHERE is_active = TRUE ORDER BY code LIMIT 1`,
+    );
+    return rows[0] ? toLocation(rows[0]) : null;
+  }
 }

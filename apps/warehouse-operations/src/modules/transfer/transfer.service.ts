@@ -1,5 +1,7 @@
 import { TransferRepository } from './transfer.repository';
 import { OutboxRepository } from '../../shared/outbox.repository';
+import { PickTaskRepository } from '../picking/picking.repository';
+import { LocationRepository } from '../location/location.repository';
 import { Transfer, CreateTransferDto, TransferStatus } from './transfer.types';
 import { ConflictError, NotFoundError } from '@mfa/errors';
 
@@ -7,6 +9,8 @@ export class TransferService {
   constructor(
     private readonly repo = new TransferRepository(),
     private readonly outbox = new OutboxRepository(),
+    private readonly picks = new PickTaskRepository(),
+    private readonly locations = new LocationRepository(),
   ) {}
 
   async create(input: CreateTransferDto): Promise<Transfer> {
@@ -50,6 +54,20 @@ export class TransferService {
     }
     return this.repo.withTransaction(async (tx) => {
       const updated = await this.repo.updateStatus(tx, id, 'dispatched', { dispatchedAt: new Date() });
+      if (transfer.lines && transfer.lines.length > 0) {
+        const firstBin = await this.locations.findFirstActive(tx);
+        const fromBin = firstBin?.code ?? transfer.fromLocation;
+        for (const line of transfer.lines) {
+          await this.picks.create(tx, {
+            productCode: line.productCode,
+            productName: line.productName,
+            quantity: line.quantity,
+            fromBin,
+            toLocation: transfer.toLocation,
+          });
+        }
+      }
+
       await this.outbox.enqueue(tx, {
         eventType: 'warehouse.transfer.dispatched',
         aggregateId: id,
