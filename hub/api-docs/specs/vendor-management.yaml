@@ -1,0 +1,167 @@
+openapi: 3.0.3
+info:
+  title: Vendor Management API
+  version: 1.0.0
+servers:
+  - url: http://localhost:3001/api/v1
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200': { description: OK }
+  /suppliers:
+    get:
+      summary: List suppliers
+      responses:
+        '200': { description: OK }
+    post:
+      summary: Create supplier
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateSupplier' }
+      responses:
+        '201': { description: Created }
+  /suppliers/{id}:
+    get:
+      summary: Get supplier
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: OK }
+    patch:
+      summary: Update supplier
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UpdateSupplier' }
+      responses:
+        '200': { description: OK }
+    delete:
+      summary: Deactivate supplier
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '204': { description: No Content }
+  /suppliers/{supplierId}/products:
+    get:
+      summary: List products for supplier
+      parameters:
+        - { in: path, name: supplierId, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: OK }
+    post:
+      summary: Add product to supplier
+      parameters:
+        - { in: path, name: supplierId, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateSupplierProduct' }
+      responses:
+        '201': { description: Created }
+  /suppliers/{supplierId}/products/{productCode}:
+    get:
+      summary: Get supplier product
+      parameters:
+        - { in: path, name: supplierId, required: true, schema: { type: string, format: uuid } }
+        - { in: path, name: productCode, required: true, schema: { type: string } }
+      responses:
+        '200': { description: OK }
+  /products/{id}:
+    patch:
+      summary: Update supplier product
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UpdateSupplierProduct' }
+      responses:
+        '200': { description: OK }
+  /products/{id}/change-price:
+    post:
+      summary: Change supplier product price
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [newCost]
+              properties:
+                newCost: { type: number }
+                currency: { type: string }
+                effectiveFrom: { type: string, format: date }
+      responses:
+        '200': { description: OK }
+  /product-lookup/{productCode}/suppliers:
+    get:
+      summary: List suppliers for product
+      parameters:
+        - { in: path, name: productCode, required: true, schema: { type: string } }
+      responses:
+        '200': { description: OK }
+  /product-lookup/{supplierId}/{productCode}/price-history:
+    get:
+      summary: Get price history
+      parameters:
+        - { in: path, name: supplierId, required: true, schema: { type: string, format: uuid } }
+        - { in: path, name: productCode, required: true, schema: { type: string } }
+      responses:
+        '200': { description: OK }
+components:
+  schemas:
+    CreateSupplier:
+      type: object
+      required: [name, paymentTerms, country, defaultCurrency]
+      properties:
+        name: { type: string }
+        legalName: { type: string }
+        taxId: { type: string }
+        email: { type: string }
+        phone: { type: string }
+        addressLine1: { type: string }
+        addressLine2: { type: string }
+        city: { type: string }
+        country: { type: string }
+        paymentTerms: { type: string }
+        defaultCurrency: { type: string }
+        notes: { type: string }
+    UpdateSupplier:
+      type: object
+      properties:
+        name: { type: string }
+        email: { type: string }
+        phone: { type: string }
+        paymentTerms: { type: string }
+        status: { type: string }
+    CreateSupplierProduct:
+      type: object
+      required: [productCode, productName, unitCost, currency, leadTimeDays, minOrderQty]
+      properties:
+        productCode: { type: string }
+        productName: { type: string }
+        unitCost: { type: number }
+        currency: { type: string }
+        leadTimeDays: { type: integer }
+        minOrderQty: { type: integer }
+        validFrom: { type: string, format: date }
+    UpdateSupplierProduct:
+      type: object
+      properties:
+        productName: { type: string }
+        unitCost: { type: number }
+        currency: { type: string }
+        leadTimeDays: { type: integer }
+        minOrderQty: { type: integer }
+        isActive: { type: boolean }

@@ -1,0 +1,121 @@
+openapi: 3.0.3
+info:
+  title: Warehouse Operations API
+  version: 1.0.0
+servers:
+  - url: http://localhost:3005/api/v1
+paths:
+  /health:
+    get:
+      summary: Health check
+      responses:
+        '200': { description: OK }
+  /locations:
+    get:
+      summary: List all warehouse locations
+      responses:
+        '200': { description: OK }
+    post:
+      summary: Create a location
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateLocation' }
+      responses:
+        '201': { description: Created }
+  /locations/{code}:
+    get:
+      summary: Get a location
+      parameters:
+        - { in: path, name: code, required: true, schema: { type: string } }
+      responses:
+        '200': { description: OK }
+  /putaway-tasks:
+    get:
+      summary: List putaway tasks
+      responses:
+        '200': { description: OK }
+  /putaway-tasks/{id}:
+    get:
+      summary: Get a putaway task
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: OK }
+  /putaway-tasks/{id}/complete:
+    post:
+      summary: Complete a putaway task
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: OK }
+  /pick-tasks:
+    get:
+      summary: List pick tasks
+      responses:
+        '200': { description: OK }
+  /pick-tasks/{id}/complete:
+    post:
+      summary: Complete a pick task
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: OK }
+  /transfers:
+    get:
+      summary: List transfers
+      responses:
+        '200': { description: OK }
+    post:
+      summary: Create a stock transfer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateTransfer' }
+      responses:
+        '201': { description: Created }
+  /transfers/{id}/dispatch:
+    post:
+      summary: Dispatch a transfer
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: OK }
+  /transfers/{id}/receive:
+    post:
+      summary: Receive a transfer
+      parameters:
+        - { in: path, name: id, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: OK }
+components:
+  schemas:
+    CreateLocation:
+      type: object
+      required: [code, zone, aisle, rack, shelf, bin]
+      properties:
+        code: { type: string }
+        zone: { type: string }
+        aisle: { type: string }
+        rack: { type: string }
+        shelf: { type: string }
+        bin: { type: string }
+        capacity: { type: integer }
+    CreateTransfer:
+      type: object
+      required: [fromLocation, toLocation, lines]
+      properties:
+        fromLocation: { type: string }
+        toLocation: { type: string }
+        notes: { type: string }
+        lines:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required: [productCode, quantity]
+            properties:
+              productCode: { type: string }
+              quantity: { type: integer, minimum: 1 }

@@ -30,4 +30,8 @@ const hub = await readFile(`${ROOT}/hub/index.html`, 'utf8');
 await writeFile(`${OUT}/index.html`, hub);
 console.log(`✅ hub → dist/index.html`);
 
+console.log(`\n▶ Copying API docs → /api-docs/`);
+await cp(`${ROOT}/hub/api-docs`, `${OUT}/api-docs`, { recursive: true });
+console.log(`✅ API docs → dist/api-docs/`);
+
 console.log(`\n🎉 Done. Output: ${OUT}`);

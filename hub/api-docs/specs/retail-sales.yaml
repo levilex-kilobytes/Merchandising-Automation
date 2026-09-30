@@ -1,0 +1,15 @@
+openapi: 3.0.3
+info: { title: Retail Sales API, version: 1.0.0 }
+servers: [{ url: 'http://localhost:3006/api/v1' }]
+paths:
+  /health: { get: { responses: { '200': { description: OK } } } }
+  /sales:
+    get:  { responses: { '200': { description: OK } } }
+    post: { responses: { '201': { description: Created } } }
+  /sales/{id}: { get: { responses: { '200': { description: OK } } } }
+  /sales/{id}/void: { post: { responses: { '200': { description: OK } } } }
+  /returns:
+    get:  { responses: { '200': { description: OK } } }
+    post: { responses: { '201': { description: Created } } }
+  /returns/{id}: { get: { responses: { '200': { description: OK } } } }
+  /prices/{productCode}: { get: { responses: { '200': { description: OK } } } }
