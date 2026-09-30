@@ -1,51 +1,17 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "services": {
-    "hub": {
-      "root": "hub"
-    },
-    "vendor-portal": {
-      "root": "frontend/vendor-management-portal",
-      "framework": "vite"
-    },
-    "procurement-dashboard": {
-      "root": "frontend/procurement-dashboard",
-      "framework": "vite"
-    },
-    "receiving-app": {
-      "root": "frontend/warehouse-receiving-app",
-      "framework": "vite"
-    },
-    "inventory-center": {
-      "root": "frontend/inventory-control-center",
-      "framework": "vite"
-    },
-    "warehouse-floor": {
-      "root": "frontend/warehouse-floor-app",
-      "framework": "vite"
-    },
-    "pos-terminal": {
-      "root": "frontend/pos-terminal-app",
-      "framework": "vite"
-    },
-    "store-manager": {
-      "root": "frontend/store-manager-dashboard",
-      "framework": "vite"
-    },
-    "finance-portal": {
-      "root": "frontend/finance-portal",
-      "framework": "vite"
-    }
-  },
+  "buildCommand": "node scripts/build-web.mjs",
+  "outputDirectory": "dist",
+  "installCommand": "npm install",
+  "framework": null,
   "rewrites": [
-    { "source": "/vendor/(.*)",      "destination": { "service": "vendor-portal" } },
-    { "source": "/procurement/(.*)", "destination": { "service": "procurement-dashboard" } },
-    { "source": "/receiving/(.*)",   "destination": { "service": "receiving-app" } },
-    { "source": "/inventory/(.*)",   "destination": { "service": "inventory-center" } },
-    { "source": "/warehouse/(.*)",   "destination": { "service": "warehouse-floor" } },
-    { "source": "/pos/(.*)",         "destination": { "service": "pos-terminal" } },
-    { "source": "/audit/(.*)",       "destination": { "service": "store-manager" } },
-    { "source": "/finance/(.*)",     "destination": { "service": "finance-portal" } },
-    { "source": "/(.*)",             "destination": { "service": "hub" } }
+    { "source": "/vendor/(.*)",      "destination": "/vendor/index.html" },
+    { "source": "/procurement/(.*)", "destination": "/procurement/index.html" },
+    { "source": "/receiving/(.*)",   "destination": "/receiving/index.html" },
+    { "source": "/inventory/(.*)",   "destination": "/inventory/index.html" },
+    { "source": "/warehouse/(.*)",   "destination": "/warehouse/index.html" },
+    { "source": "/pos/(.*)",         "destination": "/pos/index.html" },
+    { "source": "/audit/(.*)",       "destination": "/audit/index.html" },
+    { "source": "/finance/(.*)",     "destination": "/finance/index.html" }
   ]
 }
