@@ -4,18 +4,14 @@ import { Link } from 'react-router-dom';
 import { ShoppingCart, CheckCircle2, Clock, ArrowRight, PackageOpen, Plus, AlertTriangle, X } from 'lucide-react';
 import { warehouseApi } from '../api/warehouse';
 import { useToast } from '../components/ToastProvider';
-
 import { StatCard } from '../components/StatCard';
-import { formatDateTime } from '../utils/format';
 
 type Tab = 'pending' | 'completed' | 'all';
 
 export function PickList() {
   const [tab, setTab] = useState<Tab>('pending');
-  const { push } = useToast();
-
   const [createOpen, setCreateOpen] = useState(false);
-
+  const { push } = useToast();
   const qc = useQueryClient();
 
   const { data: allTasks, isLoading, error } = useQuery({
@@ -123,7 +119,7 @@ export function PickList() {
                   </span>
                 </td>
                 <td style={{ fontSize: 13, color: 'var(--muted)', whiteSpace: 'nowrap' }}>
-                  {task.completedAt ? formatDateTime(task.completedAt) : '—'}
+                  {task.completedAt ? new Date(task.completedAt).toLocaleString() : '—'}
                 </td>
                 <td>
                   {task.status === 'pending' ? (
@@ -146,6 +142,7 @@ export function PickList() {
           onSuccess={() => {
             qc.invalidateQueries({ queryKey: ['pick-tasks'] });
             setCreateOpen(false);
+            push('Pick task created', 'success');
           }}
         />
       )}
@@ -160,7 +157,7 @@ function CreatePickModal({
   onClose: () => void;
   onSuccess: () => void;
 }) {
-
+  const { push } = useToast();
   const [productCode, setProductCode] = useState('');
   const [productName, setProductName] = useState('');
   const [quantity, setQuantity] = useState(1);
@@ -177,10 +174,7 @@ function CreatePickModal({
         fromBin: fromBin.trim(),
         toLocation: toLocation.trim(),
       }),
-    onSuccess: () => {
-      push('Pick task created', 'success');
-      onSuccess();
-    },
+    onSuccess,
     onError: (e: unknown) => push(e instanceof Error ? e.message : 'Failed to create task', 'error'),
   });
 

@@ -155,7 +155,6 @@ tbody tr:hover { background: #fafbfd; }
   .nav a { padding: 10px; }
   .main { padding: 16px; }
 }
-... chart grid styles ...
 
 .chart-grid {
   display: grid;
