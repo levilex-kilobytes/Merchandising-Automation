@@ -2,10 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "services": {
     "hub": {
-      "root": "hub",
-      "framework": null,
-      "buildCommand": "echo static hub",
-      "outputDirectory": "."
+      "root": "hub"
     },
     "vendor-portal": {
       "root": "frontend/vendor-management-portal",
