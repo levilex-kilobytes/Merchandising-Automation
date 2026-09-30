@@ -7,4 +7,4 @@ import { ToastProvider } from './components/ToastProvider';
 import './styles/global.css';
 import './styles/layout.css';
 const qc = new QueryClient({ defaultOptions: { queries: { refetchOnWindowFocus: false, retry: 1, staleTime: 30_000 } } });
-ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><QueryClientProvider client={qc}><BrowserRouter basename={import.meta.env.VITE_BASE_PATH ?? '/'}><ToastProvider><App /></ToastProvider></BrowserRouter></QueryClientProvider></React.StrictMode>);
+ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><QueryClientProvider client={qc}><BrowserRouter basename="/vendor"><ToastProvider><App /></ToastProvider></BrowserRouter></QueryClientProvider></React.StrictMode>);

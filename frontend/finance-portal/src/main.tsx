@@ -14,7 +14,7 @@ const queryClient = new QueryClient({
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter basename={import.meta.env.VITE_BASE_PATH ?? '/'}>
+      <BrowserRouter basename="/finance">
         <ToastProvider>
           <App />
         </ToastProvider>
