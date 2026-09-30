@@ -3,6 +3,24 @@
 **Live demo:** [https://merchandising-automation-chg9.vercel.app](https://merchandising-automation-chg9.vercel.app)
 
 Frontend applications are deployed to Vercel. The eight backend services,
+PostgreSQL, and RabbitMQ are deployed to Railway. Both environments are
+live and fully connected.
+
+## Live URLs
+
+| App | URL |
+|---|---|
+| Hub | https://merchandising-automation-chg9.vercel.app/ |
+| Vendor Portal | https://merchandising-automation-chg9.vercel.app/vendor/ |
+| Procurement | https://merchandising-automation-chg9.vercel.app/procurement/ |
+| Receiving | https://merchandising-automation-chg9.vercel.app/receiving/ |
+| Inventory | https://merchandising-automation-chg9.vercel.app/inventory/ |
+| Warehouse Floor | https://merchandising-automation-chg9.vercel.app/warehouse/ |
+| POS Terminal | https://merchandising-automation-chg9.vercel.app/pos/ |
+| Sales Audit | https://merchandising-automation-chg9.vercel.app/audit/ |
+| Finance Portal | https://merchandising-automation-chg9.vercel.app/finance/ |
+
+Frontend applications are deployed to Vercel. The eight backend services,
 Postgres, and RabbitMQ run locally for development. See
 [Local Development Setup](#local-development-setup) to start them.
 
